@@ -1,5 +1,6 @@
 # VM Translator
-nand2tetris Project7, 8에 해당하는 과제
+- nand2tetris Project7, 8에 해당하는 과제
+- makefile로 `VMTranslator` 명령으로 실행 가능하도록 하여야 함.
 
 ## Architecture
 ```mermaid
