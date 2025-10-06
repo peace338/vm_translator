@@ -1,4 +1,5 @@
 VENV_DIR := .venv
+EXECUTABLE := VMTranslator
 
 ifeq ($(OS),Windows_NT)
 	PYTHON := $(VENV_DIR)/Scripts/python.exe
@@ -10,9 +11,9 @@ else
 	RM := rm -rf
 endif
 
-run: $(VENV_DIR)/setup activate VMTranslator
+run: $(VENV_DIR)/setup activate $(EXECUTABLE)
 	@echo "Running Python script using virtual environment..."
-	VMTranslator fileName.vm
+	$(EXECUTABLE) fileName.vm
 
 $(VENV_DIR)/setup: requirements.txt
 	@echo "Creating virtual environment..."
@@ -31,15 +32,16 @@ else
 	@echo "source $(ACTIVATE)"
 endif
 
-VMTranslator: VMTranslator.py
-	@echo "#!$(PYTHON)" > VMTranslator
-	@cat VMTranslator.py >> VMTranslator
-	@chmod +x VMTranslator
+$(EXECUTABLE): VMTranslator.py
+	@echo "#!$(PYTHON)" > $(EXECUTABLE)
+	@cat VMTranslator.py >> $(EXECUTABLE)
+	@chmod +x $(EXECUTABLE)
 
 update:
 	$(PYTHON) -m pip install --upgrade -r requirements.txt
 
 clean:
 	$(RM) $(VENV_DIR)
+	$(RM) $(EXECUTABLE)
 
 .PHONY: activate run clean
