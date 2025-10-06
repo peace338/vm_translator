@@ -17,7 +17,7 @@ class Parser:
 
     def advance(self):
         while 1:
-            self.currentCmd = self.fileHandle.readline()
+            self.currentCmd = self.fileHandle.readline().rstrip("\n")
             if self.__isCommand():
                 self.currentCmdType = self.commandType()
                 break
@@ -26,9 +26,9 @@ class Parser:
     def commandType(self) -> CommandType:
         assert self.currentCmd, "This method cannot be used if the current command type is empty"
 
-        if self.currentCmd.split(" ")[0].startswith("add"):
+        if self.currentCmd.split(" ")[0] == "add":
             return CommandType.C_ARITHMETIC
-        elif self.currentCmd.split(" ")[0].startswith("sub"):
+        elif self.currentCmd.split(" ")[0] == "sub":
             return CommandType.C_ARITHMETIC
         elif self.currentCmd.split(" ")[0] == "push":
             return CommandType.C_PUSH
@@ -41,13 +41,14 @@ class Parser:
         assert self.currentCmdType == CommandType.C_RETURN, \
             "This method cannot be used if the current command type is C_RETURN."
 
+
     def arg2(self) -> int:
         assert self.currentCmdType not in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_FUNCTION], \
             "This method cannot be used if the current command type is not C_PUSH, C_POP, C_FUNCTION."
         
     def __isCommand(self) -> bool:
 
-        if self.currentCmd.startswith("//") or self.currentCmd == "\n":
+        if self.currentCmd.startswith("//") or self.currentCmd == "":
             ret = False
         else:
             ret = True
