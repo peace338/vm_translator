@@ -11,6 +11,11 @@ def parser() -> argparse.Namespace:
 
 def main(args:argparse.Namespace):
     parser = Parser(args.input)
+    
+    while parser.hasMoreLines():
+        parser.advance()
+        print(parser.currentCmd, parser.currentCmdType)
+        # breakpoint()
 
 if __name__ == "__main__":
     args = parser()
