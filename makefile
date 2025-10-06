@@ -15,9 +15,10 @@ run: $(VENV_DIR)/setup activate $(EXECUTABLE)
 	@echo "Running Python script using virtual environment..."
 	$(EXECUTABLE) fileName.vm
 
-$(VENV_DIR): requirements.txt
+$(VENV_DIR)/created: requirements.txt
 	@echo "Creating virtual environment..."
 	python -m venv $(VENV_DIR)
+	@touch $(VENV_DIR)/created
 
 activate: $(VENV_DIR)
 	@echo "To activate the virtual environment, run:"
@@ -32,7 +33,7 @@ $(EXECUTABLE): VMTranslator.py
 	@cat VMTranslator.py >> $(EXECUTABLE)
 	@chmod +x $(EXECUTABLE)
 
-$(VENV_DIR)/setup: activate requirements.txt
+$(VENV_DIR)/setup: requirements.txt | $(VENV_DIR)/created
 	@echo "Installing dependencies..."
 	$(PYTHON) -m pip install -r requirements.txt
 	@echo "Virtual environment setup complete."

@@ -1,4 +1,5 @@
 import argparse
+from Parser.parser import Parser
 
 def parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -9,7 +10,7 @@ def parser() -> argparse.Namespace:
     return args
 
 def main(args:argparse.Namespace):
-    pass
+    parser = Parser(args.input)
 
 if __name__ == "__main__":
     args = parser()
