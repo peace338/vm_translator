@@ -10,7 +10,6 @@ else
 	RM := rm -rf
 endif
 
-$(info PYTHON = $(PYTHON))
 run: $(VENV_DIR)/setup activate VMTranslator
 	@echo "Running Python script using virtual environment..."
 	VMTranslator fileName.vm
