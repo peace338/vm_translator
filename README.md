@@ -38,5 +38,5 @@ classDiagram
 ```
 
 ## Reference
-[^1]: https://www.nand2tetris.org/project07
+[^1]: https://www.nand2tetris.org/project07  
 [^2]: https://github.com/peace338/nand2tetris.git
