@@ -1,5 +1,7 @@
 import argparse
+import os
 from Parser.parser import Parser
+from CodeWriter.codeWriter import CodeWriter
 
 def parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -11,6 +13,9 @@ def parser() -> argparse.Namespace:
 
 def main(args:argparse.Namespace):
     parser = Parser(args.input)
+    
+    outputPath = os.path.splitext(args.input)[0] + ".asm"
+    codeWriter = CodeWriter(outputPath)
     
     while parser.hasMoreLines():
         parser.advance()

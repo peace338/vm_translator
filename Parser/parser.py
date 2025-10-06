@@ -1,5 +1,5 @@
 import os
-from .commandType import CommandType
+from common.commandType import CommandType
 class Parser:
     def __init__(self, inputFile:str):
         self.fileHandle = open(inputFile, "r", encoding="utf-8")
