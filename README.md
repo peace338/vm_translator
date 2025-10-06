@@ -5,6 +5,9 @@
 - output file인 `fileName.asm`은 input file인 `fileName.vm`이 위치한 경로에 저장되도록 하여야 한다.[^1] 
 - data는 https://github.com/peace338/nand2tetris.git 에서 가져옴.
 
+## How To Use
+- `make` 로 가상환경 Setup 및 실행.
+
 ## Architecture
 ```mermaid
 classDiagram
