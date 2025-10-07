@@ -2,6 +2,32 @@ import argparse
 import os
 from Parser.parser import Parser
 from CodeWriter.codeWriter import CodeWriter
+from common.commandType import CommandType
+
+class VMTranslator:
+    def __init__(self, input):
+        self.parser = Parser(input)
+        outputPath = os.path.splitext(args.input)[0] + ".asm"
+        self.codeWriter = CodeWriter(outputPath)
+
+    def translate(self):
+        while self.parser.hasMoreLines():
+
+            # parsing
+            self.parser.advance()
+            print(self.parser.currentCmd, self.parser.currentCmdType)
+
+            # write
+            if self.parser.currentCmdType == CommandType.C_ARITHMETIC:
+                self.codeWriter.writeArithmetic(self.parser.currentCmd)
+            
+            elif self.parser.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP]:    
+                self.codeWriter.writePushPop(self.parser.currentCmdType, 
+                                             self.parser.currentCmd.split(" ")[1],
+                                             self.parser.currentCmd.split(" ")[2])
+            
+            else:
+                raise AssertionError("Unknown Command")
 
 def parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -12,15 +38,9 @@ def parser() -> argparse.Namespace:
     return args
 
 def main(args:argparse.Namespace):
-    parser = Parser(args.input)
+    vmTranslator = VMTranslator(args.input)
+    vmTranslator.translate()
     
-    outputPath = os.path.splitext(args.input)[0] + ".asm"
-    codeWriter = CodeWriter(outputPath)
-    
-    while parser.hasMoreLines():
-        parser.advance()
-        print(parser.currentCmd, parser.currentCmdType)
-        # breakpoint()
 
 if __name__ == "__main__":
     args = parser()
