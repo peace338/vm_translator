@@ -12,22 +12,15 @@ class CodeWriter:
     def writeArithmetic(self, command:str):
         self.__writeln("//"+command)
         if command == "add":
-            self.__pop("D")
-            self.__pop("M")
-            
-            #push
-            self.__writeln("M=M+D")
-            self.__stackPointerAddOne()
-
-        elif command == "sub":
-            self.__pop("D")
-            self.__pop("M")
-            
-            # push
-            self.__writeln("M=M-D")
-            self.__stackPointerAddOne()
-            
+            self.__processing("+")
             self.__writeln("")
+        elif command == "sub":
+            self.__processing("-")
+            self.__writeln("")
+        elif command == "and":
+            self.__processing("&")
+        elif command == "or":
+            self.__processing("|")
         elif command == "neg":
             self.__pop("D")
             
@@ -49,12 +42,15 @@ class CodeWriter:
             self.__comparison("JGT", self.__count)
             self.__writeln("")
             self.__count += 1
-        elif command == "and":
-            pass
-        elif command == "or":
-            pass
+        
         elif command == "not":
-            pass
+            self.__pop("D")
+            
+            #push
+            self.__writeln("M=!D")
+            self.__stackPointerAddOne()
+            
+            self.__writeln("")
         else:
             raise AssertionError(f"Unknown command: {command}")
 
@@ -187,3 +183,12 @@ class CodeWriter:
         
         if dest != "M":
             self.__writeln(f"{dest}=M")
+    def __processing(self, operator:str):
+        if operator not in ["+", "-", "&", "|"]:
+            raise AssertionError(f"Unkown operator:{operator} for processing")
+        self.__pop("D")
+        self.__pop("M")
+        
+        # push
+        self.__writeln(f"M=M{operator}D")
+        self.__stackPointerAddOne()
