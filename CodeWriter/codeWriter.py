@@ -1,8 +1,10 @@
 from common.commandType import CommandType
-\
+from common.const import Bool
+
 class CodeWriter:
     def __init__(self, outputFile:str):
         self.__fileHandle = open(outputFile, "w", encoding="utf-8")
+        self.__count = 0
     
     def __del__(self):
         self.close()
@@ -26,6 +28,39 @@ class CodeWriter:
             self.__stackPointerAddOne()
 
         elif command == "sub":
+            # SP --
+            self.__stackPointerSubOne()
+            #D=*SP
+            self.__writeln("@SP")
+            self.__writeln("A=M")
+            self.__writeln("D=M")
+            # SP --
+            self.__stackPointerSubOne()
+            # D = RAM[SP]-RAM[SP+1]
+            self.__writeln("@SP")
+            self.__writeln("A=M")
+            self.__writeln("M=M-D")
+            # SP++
+            self.__stackPointerAddOne()
+        elif command == "neg":
+            pass
+        elif command == "eq":
+            self.__comparison("JEQ", self.__count)
+            self.__writeln("")
+            self.__count += 1
+        elif command == "lt":
+            self.__comparison("JLT", self.__count)
+            self.__writeln("")
+            self.__count += 1
+        elif command == "gt":
+            self.__comparison("JGT", self.__count)
+            self.__writeln("")
+            self.__count += 1
+        elif command == "and":
+            pass
+        elif command == "or":
+            pass
+        elif command == "not":
             pass
         else:
             raise AssertionError(f"Unknown command: {command}")
@@ -43,15 +78,7 @@ class CodeWriter:
         self.__writeln("//"+commandStr+" "+segment+" "+index)
 
         if segment == "constant":    
-            # push constant i
-            # *SP=i    
-            self.__writeln("@"+index)
-            self.__writeln("D=A")
-            self.__writeln("@SP")
-            self.__writeln("A=M")
-            self.__writeln("M=D")
-            # SP++
-            self.__stackPointerAddOne()
+            self.__pushConstant(index)
             self.__writeln("")
             # constant segment에서 pop은 없음.
             return 
@@ -106,6 +133,12 @@ class CodeWriter:
         
         self.__writeln("")
 
+    def close(self):
+        self.__fileHandle.close()
+
+    def __writeln(self, text:str):
+        self.__fileHandle.write(text+"\n")
+        
     def __stackPointerAddOne(self):
         self.__writeln("@SP")
         self.__writeln("M=M+1")
@@ -113,8 +146,51 @@ class CodeWriter:
     def __stackPointerSubOne(self):
         self.__writeln("@SP")
         self.__writeln("M=M-1")
-    def close(self):
-        self.__fileHandle.close()
 
-    def __writeln(self, text:str):
-        self.__fileHandle.write(text+"\n")
+    def __pushBool(self, value:Bool):
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln(f"M={value}")
+        self.__stackPointerAddOne()
+    
+    def __pushConstant(self, value:int):
+            # push constant i
+            # *SP=i    
+            self.__writeln("@"+value)
+            self.__writeln("D=A")
+            self.__writeln("@SP")
+            self.__writeln("A=M")
+            self.__writeln("M=D")
+            # SP++
+            self.__stackPointerAddOne()
+    def __pop2ValueForComp(self):
+        # SP --
+        self.__stackPointerSubOne()
+        #D=*SP
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("D=M")
+        # SP --
+        self.__stackPointerSubOne()
+        # D = RAM[SP]+RAM[SP+1]
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("D=M-D")
+
+    def __comparison(self, jumpCommand:str, count:int):
+        self.__pop2ValueForComp()
+        
+        # JEQ
+        self.__writeln(f"@TRUE_{count}")
+        self.__writeln(f"D;{jumpCommand}")
+        
+        # push FALSE
+        self.__pushBool(Bool.FALSE)
+        self.__writeln(f"@COMP_END_{count}")
+        self.__writeln("0;JMP")
+        # TRUE LABEL
+        self.__writeln(f"(TRUE_{count})")
+        # push TRUE
+        self.__pushBool(Bool.TRUE)
+        self.__writeln(f"(COMP_END_{count})")
+        
