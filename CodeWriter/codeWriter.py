@@ -23,34 +23,23 @@ class CodeWriter:
             self.__processing("|")
         elif command == "neg":
             self.__pop("D")
-            
             #push
             self.__writeln("M=-D")
             self.__stackPointerAddOne()
-            
-            self.__writeln("")
-
-        elif command == "eq":
-            self.__comparison("JEQ", self.__count)
-            self.__writeln("")
-            self.__count += 1
-        elif command == "lt":
-            self.__comparison("JLT", self.__count)
-            self.__writeln("")
-            self.__count += 1
-        elif command == "gt":
-            self.__comparison("JGT", self.__count)
-            self.__writeln("")
-            self.__count += 1
-        
         elif command == "not":
             self.__pop("D")
-            
             #push
             self.__writeln("M=!D")
             self.__stackPointerAddOne()
-            
-            self.__writeln("")
+        elif command == "eq":
+            self.__comparison("JEQ", self.__count)
+            self.__count += 1
+        elif command == "lt":
+            self.__comparison("JLT", self.__count)
+            self.__count += 1
+        elif command == "gt":
+            self.__comparison("JGT", self.__count)
+            self.__count += 1
         else:
             raise AssertionError(f"Unknown command: {command}")
 
