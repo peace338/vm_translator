@@ -3,6 +3,7 @@
 - makefile로 `VMTranslator` 명령으로 실행 가능하도록 하여야 함.
     - 예) `VMTranslator fileName.vm`
 - output file인 `fileName.asm`은 input file인 `fileName.vm`이 위치한 경로에 저장되도록 하여야 한다.[^1] 
+- 생성된 `*.asm` 파일은 CPU Emulator와 `*.tst`파일을 통해 test할 수 있다.
 - data는 https://github.com/peace338/nand2tetris.git 에서 가져옴.
 
 ## How To Use
