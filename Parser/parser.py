@@ -29,16 +29,14 @@ class Parser:
     def commandType(self) -> CommandType:
         assert self.currentCmd, "This method cannot be used if the current command type is empty"
 
-        if self.currentCmd.split(" ")[0] == "add":
-            return CommandType.C_ARITHMETIC
-        elif self.currentCmd.split(" ")[0] == "sub":
+        if self.currentCmd.split(" ")[0] in ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]:
             return CommandType.C_ARITHMETIC
         elif self.currentCmd.split(" ")[0] == "push":
             return CommandType.C_PUSH
         elif self.currentCmd.split(" ")[0] == "pop":
             return CommandType.C_POP
         else:
-            raise AssertionError("An unknown command type was read.")
+            raise AssertionError("An unknown command type:{!r} was read.".format(self.currentCmd))
         
     def arg1(self) -> str:
         assert self.currentCmdType == CommandType.C_RETURN, \
