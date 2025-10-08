@@ -12,38 +12,31 @@ class CodeWriter:
     def writeArithmetic(self, command:str):
         self.__writeln("//"+command)
         if command == "add":
-            # SP --
-            self.__stackPointerSubOne()
-            #D=*SP
-            self.__writeln("@SP")
-            self.__writeln("A=M")
-            self.__writeln("D=M")
-            # SP --
-            self.__stackPointerSubOne()
-            # D = RAM[SP]+RAM[SP+1]
-            self.__writeln("@SP")
-            self.__writeln("A=M")
+            self.__pop("D")
+            self.__pop("M")
+            
+            #push
             self.__writeln("M=M+D")
-            # SP++
             self.__stackPointerAddOne()
 
         elif command == "sub":
-            # SP --
-            self.__stackPointerSubOne()
-            #D=*SP
-            self.__writeln("@SP")
-            self.__writeln("A=M")
-            self.__writeln("D=M")
-            # SP --
-            self.__stackPointerSubOne()
-            # D = RAM[SP]-RAM[SP+1]
-            self.__writeln("@SP")
-            self.__writeln("A=M")
+            self.__pop("D")
+            self.__pop("M")
+            
+            # push
             self.__writeln("M=M-D")
-            # SP++
             self.__stackPointerAddOne()
+            
+            self.__writeln("")
         elif command == "neg":
-            pass
+            self.__pop("D")
+            
+            #push
+            self.__writeln("M=-D")
+            self.__stackPointerAddOne()
+            
+            self.__writeln("")
+
         elif command == "eq":
             self.__comparison("JEQ", self.__count)
             self.__writeln("")
@@ -163,22 +156,11 @@ class CodeWriter:
             self.__writeln("M=D")
             # SP++
             self.__stackPointerAddOne()
-    def __pop2ValueForComp(self):
-        # SP --
-        self.__stackPointerSubOne()
-        #D=*SP
-        self.__writeln("@SP")
-        self.__writeln("A=M")
-        self.__writeln("D=M")
-        # SP --
-        self.__stackPointerSubOne()
-        # D = RAM[SP]+RAM[SP+1]
-        self.__writeln("@SP")
-        self.__writeln("A=M")
-        self.__writeln("D=M-D")
 
     def __comparison(self, jumpCommand:str, count:int):
-        self.__pop2ValueForComp()
+        self.__pop("D")
+        self.__pop("M")
+        self.__writeln("D=M-D")
         
         # JEQ
         self.__writeln(f"@TRUE_{count}")
@@ -193,4 +175,15 @@ class CodeWriter:
         # push TRUE
         self.__pushBool(Bool.TRUE)
         self.__writeln(f"(COMP_END_{count})")
+
+    def __pop(self, dest:str):
+        if dest not in ["D", "A", "M"]:
+            raise AssertionError(f"Unkown destionation:{dest} of pop")
+        # SP --
+        self.__stackPointerSubOne()
+        #D=*SP
+        self.__writeln("@SP")
+        self.__writeln("A=M")
         
+        if dest != "M":
+            self.__writeln(f"{dest}=M")
