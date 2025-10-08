@@ -8,6 +8,8 @@
 
 ## How To Use
 - `make` 로 가상환경 Setup 및 실행.
+- `make test`로 test script 실행.
+    - [^3]을 보고 필요한 Tool 설치 필요.
 
 ## Architecture
 ```mermaid
@@ -43,4 +45,5 @@ classDiagram
 
 ## Reference
 [^1]: https://www.nand2tetris.org/project07  
-[^2]: https://github.com/peace338/nand2tetris.git
+[^2]: https://github.com/peace338/nand2tetris.git  
+[^3]: https://drive.google.com/file/d/1IkIR8Pwq3PY49QgXpUJOkUUVht-TKIET/view
