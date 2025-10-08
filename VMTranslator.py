@@ -15,7 +15,7 @@ class VMTranslator:
 
             # parsing
             self.parser.advance()
-            print(self.parser.currentCmd, self.parser.currentCmdType)
+            # print(self.parser.currentCmd, self.parser.currentCmdType)
 
             # write
             if self.parser.currentCmdType == CommandType.C_ARITHMETIC:

@@ -1,5 +1,5 @@
 from common.commandType import CommandType
-from common.const import Bool
+from common.const import *
 
 class CodeWriter:
     def __init__(self, outputFile:str):
@@ -44,6 +44,7 @@ class CodeWriter:
             raise AssertionError(f"Unknown command: {command}")
 
         self.__writeln("")
+
     def writePushPop(self, command:CommandType, segment:str, index:int):
         
         if command == CommandType.C_POP:
@@ -62,49 +63,33 @@ class CodeWriter:
             return 
         
         elif segment == "local":
-            segmentSymbol = "LCL"
+            self.__calcAddr("LCL", index)
         elif segment == "argument":
-            segmentSymbol = "ARG"
+            self.__calcAddr("ARG", index)
         elif segment == "this":
-            segmentSymbol = "THIS"
+            self.__calcAddr("THIS", index)
         elif segment == "that":
-            segmentSymbol = "THAT"
+            self.__calcAddr("THAT", index)
         elif segment == "temp":
-            segmentSymbol = "TEMP"
-        elif segment == "pointer":
-            pass
+            self.__calcAddrForTempSegment(f"{TEMP_BASE_ADDR}", index)
         else:
             raise AssertionError("Unknown segment:", segment)
-
-        # addr=basePointer + index
-        self.__writeln("@"+index)
-        self.__writeln("D=A")
-        self.__writeln("@"+segmentSymbol)
-        self.__writeln("D=M+D")
-        self.__writeln("@addr")
-        self.__writeln("M=D")
-
+        
         if command == CommandType.C_POP:
-            # SP--
-            self.__stackPointerSubOne()
-
-            #*addr=*SP
-            self.__writeln("@SP")
-            self.__writeln("D=M")
+            # D = RAM[SP--]
+            self.__pop("D") 
+            # *addr=D
             self.__writeln("@addr")
+            self.__writeln("A=M")
             self.__writeln("M=D")
             
         elif command == CommandType.C_PUSH:
-            #*SP=*addr
+            # D=*addr
             self.__writeln("@addr")
             self.__writeln("A=M")
-            self.__writeln("D=A")
-            self.__writeln("@SP")
-            self.__writeln("A=M")
-            self.__writeln("M=D")
-
-            # SP++
-            self.__stackPointerAddOne()
+            self.__writeln("D=M")
+            # RAM[SP++] = D
+            self.__push("D")
 
         else:
             raise AssertionError("Unknown command")
@@ -136,11 +121,7 @@ class CodeWriter:
             # *SP=i    
             self.__writeln("@"+value)
             self.__writeln("D=A")
-            self.__writeln("@SP")
-            self.__writeln("A=M")
-            self.__writeln("M=D")
-            # SP++
-            self.__stackPointerAddOne()
+            self.__push("D")
 
     def __comparison(self, jumpCommand:str, count:int):
         self.__pop("D")
@@ -172,6 +153,16 @@ class CodeWriter:
         
         if dest != "M":
             self.__writeln(f"{dest}=M")
+
+    def __push(self, source:str):
+        if source not in ["D", "A", "M"]:
+            raise AssertionError(f"Unkown destionation:{source} of pop")
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln(f"M={source}")
+        # SP++
+        self.__stackPointerAddOne()
+
     def __processing(self, operator:str):
         if operator not in ["+", "-", "&", "|"]:
             raise AssertionError(f"Unkown operator:{operator} for processing")
@@ -181,3 +172,21 @@ class CodeWriter:
         # push
         self.__writeln(f"M=M{operator}D")
         self.__stackPointerAddOne()
+
+    def __calcAddr(self, segmentSymbol:str, index:str):
+        # addr=basePointer + index
+        self.__writeln(f"@{index}")
+        self.__writeln("D=A")
+        self.__writeln(f"@{segmentSymbol}")
+        self.__writeln("D=M+D")
+        self.__writeln("@addr")
+        self.__writeln("M=D")
+    
+    def __calcAddrForTempSegment(self, segmentSymbol:str, index:str):
+        # addr=basePointer + index
+        self.__writeln(f"@{index}")
+        self.__writeln("D=A")
+        self.__writeln(f"@{segmentSymbol}")
+        self.__writeln("D=A+D")
+        self.__writeln("@addr")
+        self.__writeln("M=D")
