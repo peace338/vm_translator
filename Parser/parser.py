@@ -7,6 +7,9 @@ class Parser:
         self.currentCmd = None
         self.currentCmdType = None
     
+    def __del__(self):
+        self.fileHandle.close()
+
     def hasMoreLines(self)->bool:
         if self.fileHandle.tell() < self.fileSize:
             ret = True
