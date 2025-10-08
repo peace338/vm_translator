@@ -17,7 +17,7 @@ run: $(VENV_DIR)/setup activate $(EXECUTABLE)
 	@echo "======================================================="
 	$(EXECUTABLE) data/7/MemoryAccess/BasicTest/BasicTest.vm
 	$(EXECUTABLE) data/7/MemoryAccess/PointerTest/PointerTest.vm
-# 	$(EXECUTABLE) data/7/MemoryAccess/StaticTest/StaticTest.vm
+	$(EXECUTABLE) data/7/MemoryAccess/StaticTest/StaticTest.vm
 	$(EXECUTABLE) data/7/StackArithmetic/SimpleAdd/SimpleAdd.vm
 	$(EXECUTABLE) data/7/StackArithmetic/StackTest/StackTest.vm
 
@@ -55,7 +55,7 @@ test: run
 	@echo "======================================================="
 	CPUEmulator data/7/MemoryAccess/BasicTest/BasicTest.tst
 	CPUEmulator data/7/MemoryAccess/PointerTest/PointerTest.tst
-# 	CPUEmulator data/7/MemoryAccess/StaticTest/StaticTest.tst
+	CPUEmulator data/7/MemoryAccess/StaticTest/StaticTest.tst
 	CPUEmulator data/7/StackArithmetic/SimpleAdd/SimpleAdd.tst
 	CPUEmulator data/7/StackArithmetic/StackTest/StackTest.tst
 

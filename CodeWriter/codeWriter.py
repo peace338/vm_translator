@@ -5,7 +5,9 @@ class CodeWriter:
     def __init__(self, outputFile:str):
         self.__fileHandle = open(outputFile, "w", encoding="utf-8")
         self.__count = 0
-    
+        self.__staticAddr = 16
+        self.__staticMap = {}
+
     def __del__(self):
         self.close()
 
@@ -80,7 +82,17 @@ class CodeWriter:
                 baseAddr = BaseAddr.THAT
             else:
                 raise ArithmeticError(f"Unexpected index:{index} for pointer segement")
-            self.__processPushPopForPointerSegment(baseAddr, command)
+            self.__processPushPopForSpecificAddr(baseAddr, command)
+        elif segment == "static":
+            if command == CommandType.C_PUSH:                
+                self.__processPushPopForSpecificAddr(self.__staticMap[index], command)
+            elif command == CommandType.C_POP:
+                self.__staticMap[index] = self.__staticAddr
+                self.__processPushPopForSpecificAddr(self.__staticMap[index], command)
+                self.__staticAddr += 1
+                self.__staticAddrVerification()
+            else:
+                raise AssertionError("Unknown Command")
         else:
             raise AssertionError("Unknown segment:", segment)
         
@@ -210,7 +222,7 @@ class CodeWriter:
         else:
             raise AssertionError(f"Unknown command:{command}")
     
-    def __processPushPopForPointerSegment(self, baseAddr:int, command:CommandType):
+    def __processPushPopForSpecificAddr(self, baseAddr:int, command:CommandType):
         if command == CommandType.C_POP:
             # D = RAM[SP--]
             self.__pop("D") 
@@ -227,3 +239,7 @@ class CodeWriter:
 
         else:
             raise AssertionError(f"Unknown command:{command}")
+        
+    def __staticAddrVerification(self):
+        if self.__staticAddr > BaseAddr.STACK:
+            raise AssertionError(f"Static address:{self.__staticAddr} should be smaller than {BaseAddr.STACK}")

@@ -6,4 +6,4 @@ class BaseAddr:
     THIS = 3
     THAT = 4
     TEMP = 5
-    
+    STACK = 256
