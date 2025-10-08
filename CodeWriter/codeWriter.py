@@ -58,41 +58,33 @@ class CodeWriter:
 
         if segment == "constant":    
             self.__pushConstant(index)
-            self.__writeln("")
-            # constant segment에서 pop은 없음.
-            return 
-        
         elif segment == "local":
             self.__calcAddr("LCL", index)
+            self.__processPushPop(command)
         elif segment == "argument":
             self.__calcAddr("ARG", index)
+            self.__processPushPop(command)
         elif segment == "this":
             self.__calcAddr("THIS", index)
+            self.__processPushPop(command)
         elif segment == "that":
             self.__calcAddr("THAT", index)
+            self.__processPushPop(command)
         elif segment == "temp":
-            self.__calcAddrForTempSegment(f"{TEMP_BASE_ADDR}", index)
+            self.__calcAddrForTempSegment(f"{BaseAddr.TEMP}", index)
+            self.__processPushPop(command)
+        elif segment == "pointer":
+            if index == "0":
+                baseAddr = BaseAddr.THIS
+            elif index == "1":
+                baseAddr = BaseAddr.THAT
+            else:
+                raise ArithmeticError(f"Unexpected index:{index} for pointer segement")
+            self.__processPushPopForPointerSegment(baseAddr, command)
         else:
             raise AssertionError("Unknown segment:", segment)
         
-        if command == CommandType.C_POP:
-            # D = RAM[SP--]
-            self.__pop("D") 
-            # *addr=D
-            self.__writeln("@addr")
-            self.__writeln("A=M")
-            self.__writeln("M=D")
-            
-        elif command == CommandType.C_PUSH:
-            # D=*addr
-            self.__writeln("@addr")
-            self.__writeln("A=M")
-            self.__writeln("D=M")
-            # RAM[SP++] = D
-            self.__push("D")
 
-        else:
-            raise AssertionError("Unknown command")
         
         self.__writeln("")
 
@@ -190,3 +182,48 @@ class CodeWriter:
         self.__writeln("D=A+D")
         self.__writeln("@addr")
         self.__writeln("M=D")
+
+    def __calcAddrForPointerSegment(self, segmentSymbol:str):
+        # addr=basePointer + index
+        self.__writeln(f"@{segmentSymbol}")
+        self.__writeln("D=A+D")
+        self.__writeln("@addr")
+        self.__writeln("M=D")
+    
+    def __processPushPop(self, command:CommandType):
+        if command == CommandType.C_POP:
+            # D = RAM[SP--]
+            self.__pop("D") 
+            # *addr=D
+            self.__writeln("@addr")
+            self.__writeln("A=M")
+            self.__writeln("M=D")
+            
+        elif command == CommandType.C_PUSH:
+            # D=*addr
+            self.__writeln("@addr")
+            self.__writeln("A=M")
+            self.__writeln("D=M")
+            # RAM[SP++] = D
+            self.__push("D")
+
+        else:
+            raise AssertionError(f"Unknown command:{command}")
+    
+    def __processPushPopForPointerSegment(self, baseAddr:int, command:CommandType):
+        if command == CommandType.C_POP:
+            # D = RAM[SP--]
+            self.__pop("D") 
+            # baseAddr=D
+            self.__writeln(f"@{baseAddr}")
+            self.__writeln("M=D")
+            
+        elif command == CommandType.C_PUSH:
+            # D=baseAddr
+            self.__writeln(f"@{baseAddr}")
+            self.__writeln("D=M")
+            # RAM[SP++] = D
+            self.__push("D")
+
+        else:
+            raise AssertionError(f"Unknown command:{command}")
