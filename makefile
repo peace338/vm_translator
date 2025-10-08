@@ -12,8 +12,10 @@ else
 endif
 
 run: $(VENV_DIR)/setup activate $(EXECUTABLE)
-	@echo "Running Python script using virtual environment..."
-# 	$(EXECUTABLE) data/7/MemoryAccess/BasicTest/BasicTest.vm
+	@echo "======================================================="
+	@echo "= Running Python script using virtual environment..."
+	@echo "======================================================="
+	$(EXECUTABLE) data/7/MemoryAccess/BasicTest/BasicTest.vm
 # 	$(EXECUTABLE) data/7/MemoryAccess/PointerTest/PointerTest.vm
 # 	$(EXECUTABLE) data/7/MemoryAccess/StaticTest/StaticTest.vm
 	$(EXECUTABLE) data/7/StackArithmetic/SimpleAdd/SimpleAdd.vm
@@ -47,11 +49,14 @@ clean:
 	$(RM) $(VENV_DIR)
 	$(RM) $(EXECUTABLE)
 
-test:
-# 	CPUEmulator data/7/MemoryAccess/BasicTest/BasicTest.tst
+test: run
+	@echo "======================================================="
+	@echo "= Testing..."
+	@echo "======================================================="
+	CPUEmulator data/7/MemoryAccess/BasicTest/BasicTest.tst
 # 	CPUEmulator data/7/MemoryAccess/PointerTest/PointerTest.tst
 # 	CPUEmulator data/7/MemoryAccess/StaticTest/StaticTest.tst
 	CPUEmulator data/7/StackArithmetic/SimpleAdd/SimpleAdd.tst
 	CPUEmulator data/7/StackArithmetic/StackTest/StackTest.tst
 
-.PHONY: activate run clean
+.PHONY: activate run clean test
