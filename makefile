@@ -17,7 +17,7 @@ run: $(VENV_DIR)/setup activate $(EXECUTABLE)
 # 	$(EXECUTABLE) data/7/MemoryAccess/PointerTest/PointerTest.vm
 # 	$(EXECUTABLE) data/7/MemoryAccess/StaticTest/StaticTest.vm
 	$(EXECUTABLE) data/7/StackArithmetic/SimpleAdd/SimpleAdd.vm
-	$(EXECUTABLE) data/7/StackArithmetic/StackTest/StackTest.vm
+# 	$(EXECUTABLE) data/7/StackArithmetic/StackTest/StackTest.vm
 
 $(VENV_DIR)/created: requirements.txt
 	@echo "Creating virtual environment..."

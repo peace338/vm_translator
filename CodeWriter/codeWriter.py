@@ -9,6 +9,27 @@ class CodeWriter:
 
     def writeArithmetic(self, command:str):
         self.__writeln("//"+command)
+        if command == "add":
+            # SP --
+            self.__stackPointerSubOne()
+            #D=*SP
+            self.__writeln("@SP")
+            self.__writeln("A=M")
+            self.__writeln("D=M")
+            # SP --
+            self.__stackPointerSubOne()
+            # D = RAM[SP]+RAM[SP+1]
+            self.__writeln("@SP")
+            self.__writeln("A=M")
+            self.__writeln("M=M+D")
+            # SP++
+            self.__stackPointerAddOne()
+
+        elif command == "sub":
+            pass
+        else:
+            raise AssertionError(f"Unknown command: {command}")
+
         self.__writeln("")
     def writePushPop(self, command:CommandType, segment:str, index:int):
         
@@ -30,8 +51,7 @@ class CodeWriter:
             self.__writeln("A=M")
             self.__writeln("M=D")
             # SP++
-            self.__writeln("@SP")
-            self.__writeln("M=M+1")
+            self.__stackPointerAddOne()
             self.__writeln("")
             # constant segment에서 pop은 없음.
             return 
@@ -46,6 +66,8 @@ class CodeWriter:
             segmentSymbol = "THAT"
         elif segment == "temp":
             segmentSymbol = "TEMP"
+        elif segment == "pointer":
+            pass
         else:
             raise AssertionError("Unknown segment:", segment)
 
@@ -59,8 +81,7 @@ class CodeWriter:
 
         if command == CommandType.C_POP:
             # SP--
-            self.__writeln("@SP")
-            self.__writeln("M=M-1")
+            self.__stackPointerSubOne()
 
             #*addr=*SP
             self.__writeln("@SP")
@@ -71,21 +92,27 @@ class CodeWriter:
         elif command == CommandType.C_PUSH:
             #*SP=*addr
             self.__writeln("@addr")
+            self.__writeln("A=M")
             self.__writeln("D=A")
             self.__writeln("@SP")
             self.__writeln("A=M")
             self.__writeln("M=D")
 
             # SP++
-            self.__writeln("@SP")
-            self.__writeln("M=M+1")
+            self.__stackPointerAddOne()
 
         else:
             raise AssertionError("Unknown command")
         
         self.__writeln("")
 
+    def __stackPointerAddOne(self):
+        self.__writeln("@SP")
+        self.__writeln("M=M+1")
 
+    def __stackPointerSubOne(self):
+        self.__writeln("@SP")
+        self.__writeln("M=M-1")
     def close(self):
         self.__fileHandle.close()
 

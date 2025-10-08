@@ -1,5 +1,6 @@
 .venv/*
 *.vm
 *.asm
+*.out
 VMTranslator
 __pycache__/
