@@ -21,6 +21,7 @@ class Parser:
     def advance(self):
         while 1:
             self.currentCmd = self.fileHandle.readline().rstrip("\n")
+            self.currentCmd = self.__stripLeadingTabs(self.currentCmd)
             if self.__isCommand():
                 self.currentCmdType = self.commandType()
                 break
@@ -28,6 +29,8 @@ class Parser:
     
     def commandType(self) -> CommandType:
         assert self.currentCmd, "This method cannot be used if the current command type is empty"
+
+
 
         if self.currentCmd.split(" ")[0] in ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]:
             return CommandType.C_ARITHMETIC
@@ -66,3 +69,10 @@ class Parser:
             return False
         else:
             return True
+        
+    def __stripLeadingTabs(self, cmd: str) -> str:
+
+        if cmd.startswith("\t"):
+            return cmd.lstrip("\t")
+        else:
+            return cmd
