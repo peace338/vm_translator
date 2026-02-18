@@ -106,6 +106,7 @@ class CodeWriter:
     def writeLabel(self, label:str):
         self.__writeln("//label {}".format(label))
         self.__writeln("({})".format(label))
+        self.__writeln("")
 
     def writeGoto(self, label:str):
         pass
@@ -113,9 +114,14 @@ class CodeWriter:
     def writeIf(self, label:str):
         self.__writeln("//if-goto {}".format(label))
         self.__writeln("@SP")
+        self.__writeln("A=M-1")
         self.__writeln("D=M")
+        self.__writeln("@SP")
+        self.__writeln("M=M-1")
         self.__writeln("@{}".format(label))
-        self.__writeln("M=D;JGT")
+        self.__writeln("D;JGT")
+
+        self.__writeln("")
 
     def writeFunction(self, functionName:str, nVars:int):
         pass
