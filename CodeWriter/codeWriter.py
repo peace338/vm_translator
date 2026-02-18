@@ -109,7 +109,9 @@ class CodeWriter:
         self.__writeln("")
 
     def writeGoto(self, label:str):
-        pass
+        self.__writeln("//goto {}".format(label))
+        self.__writeln("@{}".format(label))
+        self.__writeln("0;JMP")
     
     def writeIf(self, label:str):
         self.__writeln("//if-goto {}".format(label))

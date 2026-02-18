@@ -30,7 +30,7 @@ class VMTranslator:
             elif self.parser.currentCmdType == CommandType.C_IF:    
                 self.codeWriter.writeIf(self.parser.arg1())
             elif self.parser.currentCmdType == CommandType.C_GOTO:    
-                self.codeWriter.writeIf(self.parser.arg1())
+                self.codeWriter.writeGoto(self.parser.arg1())
             else:
                 raise AssertionError("Unknown Command \"{}\" is detected".format(self.parser.currentCmdType))
 
