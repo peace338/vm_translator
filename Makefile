@@ -15,11 +15,11 @@ run: $(VENV_DIR)/setup activate $(EXECUTABLE)
 	@echo "======================================================="
 	@echo "= Running Python script using virtual environment..."
 	@echo "======================================================="
-	$(EXECUTABLE) data/7/MemoryAccess/BasicTest/BasicTest.vm
-	$(EXECUTABLE) data/7/MemoryAccess/PointerTest/PointerTest.vm
-	$(EXECUTABLE) data/7/MemoryAccess/StaticTest/StaticTest.vm
-	$(EXECUTABLE) data/7/StackArithmetic/SimpleAdd/SimpleAdd.vm
-	$(EXECUTABLE) data/7/StackArithmetic/StackTest/StackTest.vm
+	./$(EXECUTABLE) data/7/MemoryAccess/BasicTest/BasicTest.vm
+	./$(EXECUTABLE) data/7/MemoryAccess/PointerTest/PointerTest.vm
+	./$(EXECUTABLE) data/7/MemoryAccess/StaticTest/StaticTest.vm
+	./$(EXECUTABLE) data/7/StackArithmetic/SimpleAdd/SimpleAdd.vm
+	./$(EXECUTABLE) data/7/StackArithmetic/StackTest/StackTest.vm
 
 $(VENV_DIR)/created: requirements.txt
 	@echo "Creating virtual environment..."
@@ -53,10 +53,10 @@ test: run
 	@echo "======================================================="
 	@echo "= Testing..."
 	@echo "======================================================="
-	CPUEmulator data/7/MemoryAccess/BasicTest/BasicTest.tst
-	CPUEmulator data/7/MemoryAccess/PointerTest/PointerTest.tst
-	CPUEmulator data/7/MemoryAccess/StaticTest/StaticTest.tst
-	CPUEmulator data/7/StackArithmetic/SimpleAdd/SimpleAdd.tst
-	CPUEmulator data/7/StackArithmetic/StackTest/StackTest.tst
+	CPUEmulator.sh data/7/MemoryAccess/BasicTest/BasicTest.tst
+	CPUEmulator.sh data/7/MemoryAccess/PointerTest/PointerTest.tst
+	CPUEmulator.sh data/7/MemoryAccess/StaticTest/StaticTest.tst
+	CPUEmulator.sh data/7/StackArithmetic/SimpleAdd/SimpleAdd.tst
+	CPUEmulator.sh data/7/StackArithmetic/StackTest/StackTest.tst
 
 .PHONY: activate run clean test
