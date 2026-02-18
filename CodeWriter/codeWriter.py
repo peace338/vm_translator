@@ -100,25 +100,25 @@ class CodeWriter:
         
         self.__writeln("")
 
-    def setFileName(filename:str):
+    def setFileName(self, filename:str):
         pass
 
-    def writeLabel(label:str):
+    def writeLabel(self, abel:str):
         pass
 
-    def writeGoto(label:str):
+    def writeGoto(self, label:str):
         pass
     
-    def writeIf(label:str):
+    def writeIf(self, label:str):
         pass
 
-    def writeFunction(functionName:str, nVars:int):
+    def writeFunction(self, functionName:str, nVars:int):
         pass
 
-    def writeCall(functionName:str, nVars:int):
+    def writeCall(self, functionName:str, nVars:int):
         pass
 
-    def writeReturn():
+    def writeReturn(self):
         pass
 
     def close(self):
