@@ -40,6 +40,8 @@ class Parser:
             return CommandType.C_LABEL
         elif self.currentCmd.split(" ")[0] == "if-goto":
             return CommandType.C_IF
+        elif self.currentCmd.split(" ")[0] == "goto":
+            return CommandType.C_GOTO
         else:
             raise AssertionError("An unknown command type:{!r} was read.".format(self.currentCmd))
         
@@ -49,7 +51,7 @@ class Parser:
                 current command is {}".format(self.currentCmd)
         if self.currentCmdType == CommandType.C_ARITHMETIC:
             return self.currentCmd.split(" ")[0]
-        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF]:
+        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF, CommandType.C_GOTO]:
             return self.currentCmd.split(" ")[1]
         else:
             raise AssertionError("An unknown command type was read.")
