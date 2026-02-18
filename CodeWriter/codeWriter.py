@@ -103,8 +103,8 @@ class CodeWriter:
     def setFileName(self, filename:str):
         pass
 
-    def writeLabel(self, abel:str):
-        pass
+    def writeLabel(self, label:str):
+        self.__writeln("({})".format(label))
 
     def writeGoto(self, label:str):
         pass

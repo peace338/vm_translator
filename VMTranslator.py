@@ -27,8 +27,10 @@ class VMTranslator:
                                              self.parser.arg2())
             elif self.parser.currentCmdType == CommandType.C_LABEL:    
                 self.codeWriter.writeLabel(self.parser.arg1())
+            elif self.parser.currentCmdType == CommandType.C_IF:    
+                self.codeWriter.writeIf(self.parser.arg1())
             else:
-                raise AssertionError("Unknown Command")
+                raise AssertionError("Unknown Command \"{}\" is detected".format(self.parser.currentCmdType))
 
 def parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
