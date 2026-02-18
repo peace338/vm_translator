@@ -12,7 +12,7 @@ class CodeWriter:
         self.close()
 
     def writeArithmetic(self, command:str):
-        self.__writeln("//"+command)
+        
         if command == "add":
             self.__processing("+")
             self.__writeln("")
@@ -100,25 +100,36 @@ class CodeWriter:
         
         self.__writeln("")
 
-    def setFileName(filename:str):
+    def setFileName(self, filename:str):
         pass
 
-    def writeLabel(label:str):
-        pass
+    def writeLabel(self, label:str):
+        self.__writeln("//label {}".format(label))
+        self.__writeln("({})".format(label))
+        self.__writeln("")
 
-    def writeGoto(label:str):
+    def writeGoto(self, label:str):
         pass
     
-    def writeIf(label:str):
+    def writeIf(self, label:str):
+        self.__writeln("//if-goto {}".format(label))
+        self.__writeln("@SP")
+        self.__writeln("A=M-1")
+        self.__writeln("D=M")
+        self.__writeln("@SP")
+        self.__writeln("M=M-1")
+        self.__writeln("@{}".format(label))
+        self.__writeln("D;JGT")
+
+        self.__writeln("")
+
+    def writeFunction(self, functionName:str, nVars:int):
         pass
 
-    def writeFunction(functionName:str, nVars:int):
+    def writeCall(self, functionName:str, nVars:int):
         pass
 
-    def writeCall(functionName:str, nVars:int):
-        pass
-
-    def writeReturn():
+    def writeReturn(self):
         pass
 
     def close(self):

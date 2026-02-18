@@ -23,11 +23,14 @@ class VMTranslator:
             
             elif self.parser.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP]:    
                 self.codeWriter.writePushPop(self.parser.currentCmdType, 
-                                             self.parser.currentCmd.split(" ")[1],
-                                             self.parser.currentCmd.split(" ")[2])
-            
+                                             self.parser.arg1(),
+                                             self.parser.arg2())
+            elif self.parser.currentCmdType == CommandType.C_LABEL:    
+                self.codeWriter.writeLabel(self.parser.arg1())
+            elif self.parser.currentCmdType == CommandType.C_IF:    
+                self.codeWriter.writeIf(self.parser.arg1())
             else:
-                raise AssertionError("Unknown Command")
+                raise AssertionError("Unknown Command \"{}\" is detected".format(self.parser.currentCmdType))
 
 def parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
