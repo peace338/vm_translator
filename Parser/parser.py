@@ -48,7 +48,7 @@ class Parser:
             "This method cannot be used if the current command type is C_RETURN.\n \
                 current command is {}".format(self.currentCmd)
         if self.currentCmdType == CommandType.C_ARITHMETIC:
-            return self.currentCmd
+            return self.currentCmd.split(" ")[0]
         elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF]:
             return self.currentCmd.split(" ")[1]
         else:
