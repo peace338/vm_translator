@@ -20,7 +20,8 @@ run: $(EXECUTABLE)
 # 	$(EXECUTABLE) data/7/MemoryAccess/StaticTest/StaticTest.vm
 # 	$(EXECUTABLE) data/7/StackArithmetic/SimpleAdd/SimpleAdd.vm
 # 	$(EXECUTABLE) data/7/StackArithmetic/StackTest/StackTest.vm
-	$(EXECUTABLE) data/8/ProgramFlow/BasicLoop/BasicLoop.vm
+# 	$(EXECUTABLE) data/8/ProgramFlow/BasicLoop/BasicLoop.vm
+	$(EXECUTABLE) data/8/ProgramFlow/FibonacciSeries/FibonacciSeries.vm
 
 $(EXECUTABLE): VMTranslator.py
 	@echo "#!$(PYTHON)" > $(EXECUTABLE)
@@ -40,6 +41,7 @@ test: run
 # 	CPUEmulator.sh data/7/MemoryAccess/StaticTest/StaticTest.tst
 # 	CPUEmulator.sh data/7/StackArithmetic/SimpleAdd/SimpleAdd.tst
 # 	CPUEmulator.sh data/7/StackArithmetic/StackTest/StackTest.tst
-	CPUEmulator.sh data/8/ProgramFlow/BasicLoop/BasicLoop.tst
+# 	CPUEmulator.sh data/8/ProgramFlow/BasicLoop/BasicLoop.tst
+	CPUEmulator.sh data/8/ProgramFlow/FibonacciSeries/FibonacciSeries.tst
 
 .PHONY: activate run clean test $(EXECUTABLE)
