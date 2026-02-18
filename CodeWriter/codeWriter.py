@@ -100,6 +100,33 @@ class CodeWriter:
         
         self.__writeln("")
 
+    def setFileName(filename:str):
+        pass
+
+    def writeArithmetic(command:str):
+        pass
+
+    def writePushPop(command:CommandType, segment:str, index:int):
+        pass
+
+    def writeLabel(label:str):
+        pass
+
+    def writeGoto(label:str):
+        pass
+    
+    def writeIf(label:str):
+        pass
+
+    def writeFunction(functionName:str, nVars:int):
+        pass
+
+    def writeCall(functionName:str, nVars:int):
+        pass
+
+    def writeReturn():
+        pass
+
     def close(self):
         self.__fileHandle.close()
 
