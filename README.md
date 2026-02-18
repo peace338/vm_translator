@@ -29,8 +29,6 @@ classDiagram
 	    + writeArithmetic(command(string))
 	    + wrtiePushPop(type(push or pop), segment(string), index(int))
         + setFileName(filename(string))
-        + writeArithmetic(commnad(string))
-        + writePushPop(coomand(C_PUSH or C_POP), segement(string), index(int))
         + writeLabel(label(string))
         + writeGoto(label(string))
         + writeIf(label(string))
