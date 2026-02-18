@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/VMTranslator.py",
       "args": [
-        "data/8/ProgramFlow/BasicLoop/BasicLoop.vm"
+        "data/8/ProgramFlow/FibonacciSeries/FibonacciSeries.vm"
       ],
       "console": "integratedTerminal",
       "justMyCode": false,

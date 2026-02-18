@@ -21,7 +21,7 @@ class Parser:
     def advance(self):
         while 1:
             self.currentCmd = self.fileHandle.readline().rstrip("\n")
-            self.currentCmd = self.__stripLeadingTabs(self.currentCmd)
+            self.currentCmd = self.__normalizeLine(self.currentCmd)
             if self.__isCommand():
                 self.currentCmdType = self.commandType()
                 break
@@ -30,16 +30,18 @@ class Parser:
     def commandType(self) -> CommandType:
         assert self.currentCmd, "This method cannot be used if the current command type is empty"
 
-        if self.currentCmd.split(" ")[0] in ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]:
+        if self.currentCmd.split()[0] in ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]:
             return CommandType.C_ARITHMETIC
-        elif self.currentCmd.split(" ")[0] == "push":
+        elif self.currentCmd.split()[0] == "push":
             return CommandType.C_PUSH
-        elif self.currentCmd.split(" ")[0] == "pop":
+        elif self.currentCmd.split()[0] == "pop":
             return CommandType.C_POP
-        elif self.currentCmd.split(" ")[0] == "label":
+        elif self.currentCmd.split()[0] == "label":
             return CommandType.C_LABEL
-        elif self.currentCmd.split(" ")[0] == "if-goto":
+        elif self.currentCmd.split()[0] == "if-goto":
             return CommandType.C_IF
+        elif self.currentCmd.split()[0] == "goto":
+            return CommandType.C_GOTO
         else:
             raise AssertionError("An unknown command type:{!r} was read.".format(self.currentCmd))
         
@@ -48,9 +50,9 @@ class Parser:
             "This method cannot be used if the current command type is C_RETURN.\n \
                 current command is {}".format(self.currentCmd)
         if self.currentCmdType == CommandType.C_ARITHMETIC:
-            return self.currentCmd
-        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF]:
-            return self.currentCmd.split(" ")[1]
+            return self.currentCmd.split()[0]
+        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF, CommandType.C_GOTO]:
+            return self.currentCmd.split()[1]
         else:
             raise AssertionError("An unknown command type was read.")
 
@@ -58,9 +60,9 @@ class Parser:
         assert self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_FUNCTION, CommandType.C_CALL], \
             "This method cannot be used if the current command type is not C_PUSH, C_POP, C_FUNCTION."
         if self.currentCmdType == CommandType.C_PUSH:
-            return self.currentCmd.split(" ")[2]
+            return self.currentCmd.split()[2]
         elif self.currentCmdType == CommandType.C_POP:
-            return self.currentCmd.split(" ")[2]
+            return self.currentCmd.split()[2]
         else:
             raise AssertionError("An unknown command type was read.")
     
@@ -71,9 +73,7 @@ class Parser:
         else:
             return True
         
-    def __stripLeadingTabs(self, cmd: str) -> str:
-
-        if cmd.startswith("\t"):
-            return cmd.lstrip("\t")
-        else:
-            return cmd
+    def __normalizeLine(self, cmd: str) -> str:
+        # Normalize leading whitespace and strip inline comments.
+        cmd = cmd.lstrip()
+        return cmd.strip()
