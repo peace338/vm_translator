@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug VMTranslator",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/VMTranslator.py",
+      "args": [
+        "data/8/ProgramFlow/BasicLoop/BasicLoop.vm"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "stopOnEntry": true
+    }
+  ]
+}
