@@ -103,12 +103,6 @@ class CodeWriter:
     def setFileName(filename:str):
         pass
 
-    def writeArithmetic(command:str):
-        pass
-
-    def writePushPop(command:CommandType, segment:str, index:int):
-        pass
-
     def writeLabel(label:str):
         pass
 
