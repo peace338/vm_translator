@@ -165,6 +165,7 @@ class CodeWriter:
         self.__writeln("M=D")
         # *ARG = pop()
         self.__writeln("@ARG")
+        self.__writeln("A=M")
         self.__pop("M")
         # SP = ARG+1
         self.__writeln("@ARG")
