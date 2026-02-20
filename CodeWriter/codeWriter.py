@@ -128,7 +128,13 @@ class CodeWriter:
     def writeFunction(self, functionName:str, nVars:int):
         self.__writeln("//function {} {}".format(functionName, nVars))
         self.__writeln("({})".format(functionName))
-        self.__pushConstant(0)
+        # push 0
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("M=0")
+        self.__writeln("@SP")
+        self.__writeln("M=M+1")
+        # SP-(LCL+nVars)>=0
         self.__writeln("@SP")
         self.__writeln("D=A")
         self.__writeln("@LCL")
