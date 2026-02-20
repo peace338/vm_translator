@@ -206,6 +206,7 @@ class CodeWriter:
         self.__writeln("M=D")
         # goto retAddr
         self.__writeln("@retAddr")
+        self.__writeln("A=M")
         self.__writeln("0;JMP")
         self.__writeln("")
 
