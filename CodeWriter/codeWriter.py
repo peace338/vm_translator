@@ -126,13 +126,76 @@ class CodeWriter:
         self.__writeln("")
 
     def writeFunction(self, functionName:str, nVars:int):
-        pass
+        self.__writeln("//function {} {}".format(functionName, nVars))
+        self.__writeln("({})".format(functionName))
+        self.__pushConstant(0)
+        self.__writeln("@SP")
+        self.__writeln("D=A")
+        self.__writeln("@LCL")
+        self.__writeln("D=D-A")
+        self.__writeln("@{}".format(nVars))
+        self.__writeln("D=D-A")
+        self.__writeln("@{}".format(functionName))
+        self.__writeln("D;JGE")
+        self.__writeln("")
 
     def writeCall(self, functionName:str, nVars:int):
         pass
 
     def writeReturn(self):
-        pass
+        self.__writeln("//return")
+        # frame = LCL
+        self.__writeln("@LCL")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("M=D")
+        # retAddr = *(frame-5)
+        self.__writeln("@5")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("D=M-D")
+        self.__writeln("@retAddr")
+        self.__writeln("M=D")
+        # *ARG = pop()
+        self.__writeln("@ARG")
+        self.__pop("M")
+        # SP = ARG+1
+        self.__writeln("@ARG")
+        self.__writeln("D=A")
+        self.__writeln("@SP")
+        self.__writeln("M=D+1")
+        # THAT = *(frmae-1)
+        self.__writeln("@1")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("D=M-D")
+        self.__writeln("@THAT")
+        self.__writeln("M=D")
+        # THIS = *(frmae-2)
+        self.__writeln("@2")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("D=M-D")
+        self.__writeln("@THIS")
+        self.__writeln("M=D")
+        # ARG = *(frmae-3)
+        self.__writeln("@3")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("D=M-D")
+        self.__writeln("@ARG")
+        self.__writeln("M=D")
+        # LCL = *(frmae-4)
+        self.__writeln("@4")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("D=M-D")
+        self.__writeln("@LCL")
+        self.__writeln("M=D")
+        # goto retAddr
+        self.__writeln("@retAddr")
+        self.__writeln("0;JMP")
+        self.__writeln("")
 
     def close(self):
         self.__fileHandle.close()
@@ -157,7 +220,7 @@ class CodeWriter:
     def __pushConstant(self, value:int):
             # push constant i
             # *SP=i    
-            self.__writeln("@"+value)
+            self.__writeln("@{}".format(str(value)))
             self.__writeln("D=A")
             self.__push("D")
 
