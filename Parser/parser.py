@@ -42,6 +42,10 @@ class Parser:
             return CommandType.C_IF
         elif self.currentCmd.split()[0] == "goto":
             return CommandType.C_GOTO
+        elif self.currentCmd.split()[0] == "function":
+            return CommandType.C_FUNCTION
+        elif self.currentCmd.split()[0] == "return":
+            return CommandType.C_RETURN
         else:
             raise AssertionError("An unknown command type:{!r} was read.".format(self.currentCmd))
         
@@ -51,7 +55,7 @@ class Parser:
                 current command is {}".format(self.currentCmd)
         if self.currentCmdType == CommandType.C_ARITHMETIC:
             return self.currentCmd.split()[0]
-        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF, CommandType.C_GOTO]:
+        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF, CommandType.C_GOTO, CommandType.C_FUNCTION]:
             return self.currentCmd.split()[1]
         else:
             raise AssertionError("An unknown command type was read.")
@@ -62,6 +66,8 @@ class Parser:
         if self.currentCmdType == CommandType.C_PUSH:
             return self.currentCmd.split()[2]
         elif self.currentCmdType == CommandType.C_POP:
+            return self.currentCmd.split()[2]
+        elif self.currentCmdType == CommandType.C_FUNCTION:
             return self.currentCmd.split()[2]
         else:
             raise AssertionError("An unknown command type was read.")

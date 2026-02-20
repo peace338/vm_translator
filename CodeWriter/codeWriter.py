@@ -12,7 +12,7 @@ class CodeWriter:
         self.close()
 
     def writeArithmetic(self, command:str):
-        
+        self.__writeln("//{}".format(command))
         if command == "add":
             self.__processing("+")
             self.__writeln("")
@@ -126,13 +126,92 @@ class CodeWriter:
         self.__writeln("")
 
     def writeFunction(self, functionName:str, nVars:int):
-        pass
+        self.__writeln("//function {} {}".format(functionName, nVars))
+        self.__writeln("({})".format(functionName))
+        # push 0
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("M=0")
+        self.__writeln("@SP")
+        self.__writeln("M=M+1")
+        # SP-(LCL+nVars)>=0
+        self.__writeln("@SP")
+        self.__writeln("D=A")
+        self.__writeln("@LCL")
+        self.__writeln("D=D-A")
+        self.__writeln("@{}".format(nVars))
+        self.__writeln("D=D-A")
+        self.__writeln("@{}".format(functionName))
+        self.__writeln("D;JGE")
+        self.__writeln("")
 
     def writeCall(self, functionName:str, nVars:int):
         pass
 
     def writeReturn(self):
-        pass
+        self.__writeln("//return")
+        # frame = LCL
+        self.__writeln("@LCL")
+        self.__writeln("D=M")
+        self.__writeln("@frame")
+        self.__writeln("M=D")
+        # retAddr = *(frame-5)
+        self.__writeln("@5")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@retAddr")
+        self.__writeln("M=D")
+        # *ARG = pop()
+        self.__writeln("@SP")
+        self.__writeln("A=M-1")
+        self.__writeln("D=M")
+        self.__writeln("@ARG")
+        self.__writeln("A=M")
+        self.__writeln("M=D")
+        # SP = ARG+1
+        self.__writeln("@ARG")
+        self.__writeln("D=M")
+        self.__writeln("@SP")
+        self.__writeln("M=D+1")
+        # THAT = *(frmae-1)
+        self.__writeln("@1")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@THAT")
+        self.__writeln("M=D")
+        # THIS = *(frmae-2)
+        self.__writeln("@2")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@THIS")
+        self.__writeln("M=D")
+        # ARG = *(frmae-3)
+        self.__writeln("@3")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@ARG")
+        self.__writeln("M=D")
+        # LCL = *(frmae-4)
+        self.__writeln("@4")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@LCL")
+        self.__writeln("M=D")
+        # goto retAddr
+        self.__writeln("@retAddr")
+        self.__writeln("A=M")
+        self.__writeln("0;JMP")
+        self.__writeln("")
 
     def close(self):
         self.__fileHandle.close()
