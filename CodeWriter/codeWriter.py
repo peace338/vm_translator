@@ -220,7 +220,7 @@ class CodeWriter:
     def __pushConstant(self, value:int):
             # push constant i
             # *SP=i    
-            self.__writeln("@{}".format(str(value)))
+            self.__writeln("@"+value)
             self.__writeln("D=A")
             self.__push("D")
 
