@@ -164,9 +164,12 @@ class CodeWriter:
         self.__writeln("@retAddr")
         self.__writeln("M=D")
         # *ARG = pop()
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("D=M")
         self.__writeln("@ARG")
         self.__writeln("A=M")
-        self.__pop("M")
+        self.__writeln("M=D")
         # SP = ARG+1
         self.__writeln("@ARG")
         self.__writeln("D=M")
