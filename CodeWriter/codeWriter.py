@@ -12,7 +12,7 @@ class CodeWriter:
         self.close()
 
     def writeArithmetic(self, command:str):
-        
+        self.__writeln("//{}".format(command))
         if command == "add":
             self.__processing("+")
             self.__writeln("")
