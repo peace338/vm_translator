@@ -52,11 +52,11 @@ class VMTranslator:
             else:
                 raise AssertionError("Unknown Command \"{}\" is detected".format(self.parser.currentCmdType))
 
-def parser() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input", type=str, help="path of input file. ex: ./fileName.vm")
-    parser.add_argument("--debug", action="store_true", help="run debug mode")
-    args = parser.parse_args()
+def argparser() -> argparse.Namespace:
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("input", type=str, help="path of input file. ex: ./fileName.vm")
+    argparser.add_argument("--debug", action="store_true", help="run debug mode")
+    args = argparser.parse_args()
     
     return args
 
@@ -66,5 +66,5 @@ def main(args:argparse.Namespace):
     
 
 if __name__ == "__main__":
-    args = parser()
+    args = argparser()
     main(args)
