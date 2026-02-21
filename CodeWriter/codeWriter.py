@@ -152,26 +152,32 @@ class CodeWriter:
     def writeCall(self, functionName:str, nVars:int):
         self.__writeln("//call {} {}".format(functionName, nVars))
         # push returnAddress
+        self.__writeln("//call {} {} - push returnAddress".format(functionName, nVars))
         self.__writeln("@SP")
         self.__writeln("D=M")
         self.__push("D")
         # push LCL
+        self.__writeln("//call {} {} - push LCL".format(functionName, nVars))
         self.__writeln("@LCL")
         self.__writeln("D=M")
         self.__push("D")
         # push ARG
+        self.__writeln("//call {} {} - push ARG".format(functionName, nVars))
         self.__writeln("@ARG")
         self.__writeln("D=M")
         self.__push("D")
         # push THIS
+        self.__writeln("//call {} {} - push THIS".format(functionName, nVars))
         self.__writeln("@THIS")
         self.__writeln("D=M")
         self.__push("D")
         # push THAT
+        self.__writeln("//call {} {} - push THAT".format(functionName, nVars))
         self.__writeln("@THAT")
         self.__writeln("D=M")
         self.__push("D")
         # ARG = SP-5-nArgs
+        self.__writeln("//call {} {} - push SP-5-nArgs".format(functionName, nVars))
         self.__writeln("@5")
         self.__writeln("D=A")
         self.__writeln("@{}".format(nVars))
@@ -182,10 +188,12 @@ class CodeWriter:
         self.__writeln("M=D")
         
         # goto f
+        self.__writeln("//call {} {} - goto f".format(functionName, nVars))
         self.__writeln("@{}".format(functionName))
         self.__writeln("0;JMP")
 
         #(returnAddress)
+        self.__writeln("//call {} {} - (returnAddress)".format(functionName, nVars))
         self.__writeln(self.__getReturnLabel(functionName))
 
 
