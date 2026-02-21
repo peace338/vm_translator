@@ -29,23 +29,25 @@ class Parser:
     
     def commandType(self) -> CommandType:
         assert self.currentCmd, "This method cannot be used if the current command type is empty"
-
-        if self.currentCmd.split()[0] in ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]:
+        buffer = self.currentCmd.split()[0]
+        if buffer in ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]:
             return CommandType.C_ARITHMETIC
-        elif self.currentCmd.split()[0] == "push":
+        elif buffer == "push":
             return CommandType.C_PUSH
-        elif self.currentCmd.split()[0] == "pop":
+        elif buffer == "pop":
             return CommandType.C_POP
-        elif self.currentCmd.split()[0] == "label":
+        elif buffer == "label":
             return CommandType.C_LABEL
-        elif self.currentCmd.split()[0] == "if-goto":
+        elif buffer == "if-goto":
             return CommandType.C_IF
-        elif self.currentCmd.split()[0] == "goto":
+        elif buffer == "goto":
             return CommandType.C_GOTO
-        elif self.currentCmd.split()[0] == "function":
+        elif buffer == "function":
             return CommandType.C_FUNCTION
-        elif self.currentCmd.split()[0] == "return":
+        elif buffer == "return":
             return CommandType.C_RETURN
+        elif buffer == "call":
+            return CommandType.C_CALL
         else:
             raise AssertionError("An unknown command type:{!r} was read.".format(self.currentCmd))
         
@@ -55,7 +57,7 @@ class Parser:
                 current command is {}".format(self.currentCmd)
         if self.currentCmdType == CommandType.C_ARITHMETIC:
             return self.currentCmd.split()[0]
-        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF, CommandType.C_GOTO, CommandType.C_FUNCTION]:
+        elif self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_LABEL, CommandType.C_IF, CommandType.C_GOTO, CommandType.C_FUNCTION, CommandType.C_CALL]:
             return self.currentCmd.split()[1]
         else:
             raise AssertionError("An unknown command type was read.")
@@ -63,14 +65,8 @@ class Parser:
     def arg2(self) -> int:
         assert self.currentCmdType in [CommandType.C_PUSH, CommandType.C_POP, CommandType.C_FUNCTION, CommandType.C_CALL], \
             "This method cannot be used if the current command type is not C_PUSH, C_POP, C_FUNCTION."
-        if self.currentCmdType == CommandType.C_PUSH:
-            return self.currentCmd.split()[2]
-        elif self.currentCmdType == CommandType.C_POP:
-            return self.currentCmd.split()[2]
-        elif self.currentCmdType == CommandType.C_FUNCTION:
-            return self.currentCmd.split()[2]
-        else:
-            raise AssertionError("An unknown command type was read.")
+        
+        return self.currentCmd.split()[2]
     
     def __isCommand(self) -> bool:
 
