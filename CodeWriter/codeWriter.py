@@ -10,7 +10,7 @@ class CodeWriter:
         self.__staticMap = {}
 
         # For FibonacciElement, StaticsTest
-        self.__writeBootstrapCode()
+        # self.__writeBootstrapCode()
 
     def __del__(self):
         self.close()
@@ -132,12 +132,9 @@ class CodeWriter:
     def writeFunction(self, functionName:str, nVars:int):
         self.__writeln("//function {} {}".format(functionName, nVars))
         self.__writeln("({})".format(functionName))
-        # push 0
-        self.__writeln("@SP")
-        self.__writeln("A=M")
-        self.__writeln("M=0")
-        self.__writeln("@SP")
-        self.__writeln("M=M+1")
+        
+        # local variable loop
+        self.__writeln(self.__getLabel(functionName, "localLoop"))
         # SP-(LCL+nVars)>=0
         self.__writeln("@SP")
         self.__writeln("D=A")
@@ -145,8 +142,20 @@ class CodeWriter:
         self.__writeln("D=D-A")
         self.__writeln("@{}".format(nVars))
         self.__writeln("D=D-A")
-        self.__writeln("@{}".format(functionName))
+        self.__writeln("@{}${}".format(functionName,"localLoopStop"))
         self.__writeln("D;JGE")
+        # push 0
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("M=0")
+        self.__writeln("@SP")
+        self.__writeln("M=M+1")
+        # jumpt to localLoop
+        self.__writeln("@{}${}".format(functionName,"localLoop"))
+        self.__writeln("D;JGE")
+
+        # stop label of local loop
+        self.__writeln(self.__getLabel(functionName, "localLoopStop"))
         self.__writeln("")
 
     def writeCall(self, functionName:str, nVars:int):
@@ -413,6 +422,12 @@ class CodeWriter:
         self.__callCount += 1
 
         return ret
+
+    def __getLabel(self, functionName:str, labelName:str) -> str:
+        ret = "({}${})".format(functionName, labelName)
+
+        return ret
+    
     def __writeBootstrapCode(self):
         self.__writeln("//bootstrap")
         # SP=256
