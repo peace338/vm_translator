@@ -10,7 +10,7 @@ class CodeWriter:
         self.__staticMap = {}
 
         # For FibonacciElement, StaticsTest
-        self.__writeBootstrapCode()
+        # self.__writeBootstrapCode()
 
     def __del__(self):
         self.close()

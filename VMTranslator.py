@@ -5,9 +5,21 @@ from CodeWriter.codeWriter import CodeWriter
 from common.commandType import CommandType
 
 class VMTranslator:
-    def __init__(self, input):
-        self.parser = Parser(input)
-        outputPath = os.path.splitext(args.input)[0] + ".asm"
+    def __init__(self, input:str):
+        self.filelist = None
+        if os.path.isdir(input):
+            self.filelist = [os.path.join(input, f) \
+                                for f in os.listdir(input) \
+                                if f.endswith(".vm") and os.path.isfile(os.path.join(input, f))]
+            outputPath = os.path.join(input, os.path.basename(os.path.normpath(input)) + ".asm")
+        elif os.path.isfile(input):
+            self.filelist = [input]
+            outputPath = os.path.splitext(input)[0] + ".asm"
+        else:
+            raise ValueError(f"Input must be a file or directory: {input}")
+        
+        self.parser = Parser(self.filelist[0])
+        
         self.codeWriter = CodeWriter(outputPath)
 
     def translate(self):
