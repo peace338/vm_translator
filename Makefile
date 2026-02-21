@@ -23,7 +23,7 @@ run: $(EXECUTABLE)
 # 	$(EXECUTABLE) data/8/ProgramFlow/BasicLoop/BasicLoop.vm
 # 	$(EXECUTABLE) data/8/ProgramFlow/FibonacciSeries/FibonacciSeries.vm
 # 	$(EXECUTABLE) data/8/FunctionCalls/SimpleFunction/SimpleFunction.vm
-	$(EXECUTABLE) data/8/FunctionCalls/NestedCall/Sys.vm
+	$(EXECUTABLE) data/8/FunctionCalls/FibonacciElement/FibonacciElement.vm
 	
 
 $(EXECUTABLE): VMTranslator.py
@@ -47,6 +47,6 @@ test: run
 # 	CPUEmulator.sh data/8/ProgramFlow/BasicLoop/BasicLoop.tst
 # 	CPUEmulator.sh data/8/ProgramFlow/FibonacciSeries/FibonacciSeries.tst
 # 	CPUEmulator.sh data/8/FunctionCalls/SimpleFunction/SimpleFunction.tst
-	CPUEmulator.sh data/8/FunctionCalls/NestedCall/NestedCall.tst
+	CPUEmulator.sh data/8/FunctionCalls/FibonacciElement/FibonacciElement.tst
 
 .PHONY: activate run clean test $(EXECUTABLE)
