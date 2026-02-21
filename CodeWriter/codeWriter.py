@@ -142,7 +142,7 @@ class CodeWriter:
         self.__writeln("D=D-A")
         self.__writeln("@{}".format(nVars))
         self.__writeln("D=D-A")
-        self.__writeln("@{}${}".format(functionName,"localLoopStop"))
+        self.__writeln(self.__getLabel(functionName, "localLoopStop"))
         self.__writeln("D;JGE")
         # push 0
         self.__writeln("@SP")
@@ -151,7 +151,7 @@ class CodeWriter:
         self.__writeln("@SP")
         self.__writeln("M=M+1")
         # jumpt to localLoop
-        self.__writeln("@{}${}".format(functionName,"localLoop"))
+        self.__writeln(self.__getLabel(functionName, "localLoop"))
         self.__writeln("D;JGE")
 
         # stop label of local loop
