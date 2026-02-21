@@ -29,11 +29,16 @@ class VMTranslator:
         self.fileIndex += 1
 
         return ret
-
+    def __hasMoreFiles(self) -> bool:
+        return self.fileIndex < self.lenFilelist
+    
     def translate(self):
         while 1:
             if not self.parser.hasMoreLines():
-                break
+                if self.__hasMoreFiles():
+                    self.__updateFile()
+                else:
+                    break
             # parsing
             self.parser.advance()
             # print(self.parser.currentCmd, self.parser.currentCmdType)
