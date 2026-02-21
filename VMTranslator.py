@@ -36,7 +36,7 @@ class VMTranslator:
         while 1:
             if not self.parser.hasMoreLines():
                 if self.__hasMoreFiles():
-                    self.__updateFile()
+                    self.parser = self.__updateFile()
                 else:
                     break
             # parsing
