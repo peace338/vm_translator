@@ -9,6 +9,9 @@ class CodeWriter:
         self.__staticAddr = 16
         self.__staticMap = {}
 
+        # For FibonacciElement, StaticsTest
+        self.__writeBootstrapCode()
+
     def __del__(self):
         self.close()
 
@@ -402,3 +405,11 @@ class CodeWriter:
         self.__callCount += 1
 
         return ret
+    def __writeBootstrapCode(self):
+        # SP=256
+        self.__writeln("@256")
+        self.__writeln("D=A")
+        self.__writeln("@SP")
+        self.__writeln("M=D")
+        # call Sys.init
+        self.writeCall("Sys.init",0)
