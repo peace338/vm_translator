@@ -23,7 +23,7 @@ run: $(EXECUTABLE)
 # 	$(EXECUTABLE) data/8/ProgramFlow/BasicLoop/BasicLoop.vm
 # 	$(EXECUTABLE) data/8/ProgramFlow/FibonacciSeries/FibonacciSeries.vm
 # 	$(EXECUTABLE) data/8/FunctionCalls/SimpleFunction/SimpleFunction.vm
-	$(EXECUTABLE) data/8/FunctionCalls/NestedCall/NestedCall.vm
+	$(EXECUTABLE) data/8/FunctionCalls/NestedCall/Sys.vm
 	
 
 $(EXECUTABLE): VMTranslator.py
