@@ -132,18 +132,16 @@ class CodeWriter:
     def writeFunction(self, functionName:str, nVars:int):
         self.__writeln("//function {} {}".format(functionName, nVars))
         self.__writeln("({})".format(functionName))
-        
-        # local variable loop
-        self.__writeln(self.__getLabel(functionName, "localLoop"))
-        # SP-(LCL+nVars)>=0
+    
+        # SP-(LCL+nVars)<=0
         self.__writeln("@SP")
         self.__writeln("D=A")
         self.__writeln("@LCL")
         self.__writeln("D=D-A")
         self.__writeln("@{}".format(nVars))
         self.__writeln("D=D-A")
-        self.__writeln(self.__getLabel(functionName, "localLoopStop"))
-        self.__writeln("D;JGE")
+        self.__writeln("@{}${}".format(functionName,"localLoopStop"))
+        self.__writeln("D;JLE")
         # push 0
         self.__writeln("@SP")
         self.__writeln("A=M")
@@ -151,8 +149,8 @@ class CodeWriter:
         self.__writeln("@SP")
         self.__writeln("M=M+1")
         # jumpt to localLoop
-        self.__writeln(self.__getLabel(functionName, "localLoop"))
-        self.__writeln("D;JGE")
+        self.__writeln("@{}".format(functionName))
+        self.__writeln("0;JMP")
 
         # stop label of local loop
         self.__writeln(self.__getLabel(functionName, "localLoopStop"))
