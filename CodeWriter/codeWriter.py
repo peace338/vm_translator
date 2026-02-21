@@ -177,7 +177,7 @@ class CodeWriter:
         self.__writeln("D=M")
         self.__push("D")
         # ARG = SP-5-nArgs
-        self.__writeln("//call {} {} - push SP-5-nArgs".format(functionName, nVars))
+        self.__writeln("//call {} {} - ARG = SP-5-nArgs".format(functionName, nVars))
         self.__writeln("@5")
         self.__writeln("D=A")
         self.__writeln("@{}".format(nVars))
