@@ -5,8 +5,12 @@ class CodeWriter:
     def __init__(self, outputFile:str):
         self.__fileHandle = open(outputFile, "w", encoding="utf-8")
         self.__count = 0
+        self.__callCount = 0
         self.__staticAddr = 16
         self.__staticMap = {}
+
+        # For FibonacciElement, StaticsTest
+        self.__writeBootstrapCode()
 
     def __del__(self):
         self.close()
@@ -146,7 +150,46 @@ class CodeWriter:
         self.__writeln("")
 
     def writeCall(self, functionName:str, nVars:int):
-        pass
+        self.__writeln("//call {} {}".format(functionName, nVars))
+        # push returnAddress
+        self.__writeln("@SP")
+        self.__writeln("D=M")
+        self.__push("D")
+        # push LCL
+        self.__writeln("@LCL")
+        self.__writeln("D=M")
+        self.__push("D")
+        # push ARG
+        self.__writeln("@ARG")
+        self.__writeln("D=M")
+        self.__push("D")
+        # push THIS
+        self.__writeln("@THIS")
+        self.__writeln("D=M")
+        self.__push("D")
+        # push THAT
+        self.__writeln("@THAT")
+        self.__writeln("D=M")
+        self.__push("D")
+        # ARG = SP-5-nArgs
+        self.__writeln("@5")
+        self.__writeln("D=A")
+        self.__writeln("@{}".format(nVars))
+        self.__writeln("D=D+A")
+        self.__writeln("@SP")
+        self.__writeln("D=M-D")
+        self.__writeln("@ARG")
+        self.__writeln("M=D")
+        
+        # goto f
+        self.__writeln("@({})".format(functionName))
+        self.__writeln("0;JMP")
+
+        #(returnAddress)
+        self.__writeln(self.__getReturnLabel(functionName))
+
+
+        self.__writeln("")
 
     def writeReturn(self):
         self.__writeln("//return")
@@ -272,7 +315,7 @@ class CodeWriter:
             self.__writeln(f"{dest}=M")
 
     def __push(self, source:str):
-        if source not in ["D", "A", "M"]:
+        if source not in ["D", "A"]:
             raise AssertionError(f"Unkown destionation:{source} of pop")
         self.__writeln("@SP")
         self.__writeln("A=M")
@@ -356,3 +399,17 @@ class CodeWriter:
     def __staticAddrVerification(self):
         if self.__staticAddr > BaseAddr.STACK:
             raise AssertionError(f"Static address:{self.__staticAddr} should be smaller than {BaseAddr.STACK}")
+
+    def __getReturnLabel(self, functionName:str) -> str:
+        ret = "{}$ret.{}".format(functionName, self.__callCount)
+        self.__callCount += 1
+
+        return ret
+    def __writeBootstrapCode(self):
+        # SP=256
+        self.__writeln("@256")
+        self.__writeln("D=A")
+        self.__writeln("@SP")
+        self.__writeln("M=D")
+        # call Sys.init
+        self.writeCall("Sys.init",0)
