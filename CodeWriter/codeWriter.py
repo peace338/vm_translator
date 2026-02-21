@@ -182,7 +182,7 @@ class CodeWriter:
         self.__writeln("M=D")
         
         # goto f
-        self.__writeln("@({})".format(functionName))
+        self.__writeln("@{}".format(functionName))
         self.__writeln("0;JMP")
 
         #(returnAddress)
@@ -401,11 +401,12 @@ class CodeWriter:
             raise AssertionError(f"Static address:{self.__staticAddr} should be smaller than {BaseAddr.STACK}")
 
     def __getReturnLabel(self, functionName:str) -> str:
-        ret = "{}$ret.{}".format(functionName, self.__callCount)
+        ret = "({}$ret.{})".format(functionName, self.__callCount)
         self.__callCount += 1
 
         return ret
     def __writeBootstrapCode(self):
+        self.__writeln("//bootstrap")
         # SP=256
         self.__writeln("@256")
         self.__writeln("D=A")

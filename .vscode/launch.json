@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/VMTranslator.py",
       "args": [
-        "data/8/ProgramFlow/FibonacciSeries/FibonacciSeries.vm"
+        "data/8/FunctionCalls/FibonacciElement"
       ],
       "console": "integratedTerminal",
       "justMyCode": false,
