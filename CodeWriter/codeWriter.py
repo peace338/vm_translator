@@ -406,6 +406,7 @@ class CodeWriter:
 
         return ret
     def __writeBootstrapCode(self):
+        self.__writeln("//bootstrap")
         # SP=256
         self.__writeln("@256")
         self.__writeln("D=A")
