@@ -18,13 +18,22 @@ class VMTranslator:
         else:
             raise ValueError(f"Input must be a file or directory: {input}")
         
-        self.parser = Parser(self.filelist[0])
+        self.fileIndex = 0
+        self.lenFilelist = len(self.filelist)
         
+        self.parser = self.__updateFile()
         self.codeWriter = CodeWriter(outputPath)
+    
+    def __updateFile(self) -> Parser:
+        ret = Parser(self.filelist[self.fileIndex])
+        self.fileIndex += 1
+
+        return ret
 
     def translate(self):
-        while self.parser.hasMoreLines():
-
+        while 1:
+            if not self.parser.hasMoreLines():
+                break
             # parsing
             self.parser.advance()
             # print(self.parser.currentCmd, self.parser.currentCmdType)
