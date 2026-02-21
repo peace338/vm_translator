@@ -10,7 +10,7 @@ class CodeWriter:
         self.__staticMap = {}
 
         # For FibonacciElement, StaticsTest
-        self.__writeBootstrapCode()
+        # self.__writeBootstrapCode()
 
     def __del__(self):
         self.close()
@@ -132,12 +132,6 @@ class CodeWriter:
     def writeFunction(self, functionName:str, nVars:int):
         self.__writeln("//function {} {}".format(functionName, nVars))
         self.__writeln("({})".format(functionName))
-        # push 0
-        self.__writeln("@SP")
-        self.__writeln("A=M")
-        self.__writeln("M=0")
-        self.__writeln("@SP")
-        self.__writeln("M=M+1")
         # SP-(LCL+nVars)>=0
         self.__writeln("@SP")
         self.__writeln("D=A")
@@ -148,6 +142,12 @@ class CodeWriter:
         self.__writeln("@{}".format(functionName))
         self.__writeln("D;JGE")
         self.__writeln("")
+        # push 0
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("M=0")
+        self.__writeln("@SP")
+        self.__writeln("M=M+1")
 
     def writeCall(self, functionName:str, nVars:int):
         self.__writeln("//call {} {}".format(functionName, nVars))
