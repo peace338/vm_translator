@@ -14,7 +14,7 @@ class CodeWriter:
 
     def updateFileName(self, filename:str):
         self.__currentFileName = filename
-
+        self.__staticAddr = 16
     def __del__(self):
         self.close()
 
@@ -92,10 +92,10 @@ class CodeWriter:
             self.__processPushPopForSpecificAddr(baseAddr, command)
         elif segment == "static":
             if command == CommandType.C_PUSH:                
-                self.__processPushPopForSpecificAddr(self.__staticMap[index], command)
+                self.__processPushPopForStatic(index, command)
             elif command == CommandType.C_POP:
                 self.__staticMap[index] = self.__staticAddr
-                self.__processPushPopForSpecificAddr(self.__staticMap[index], command)
+                self.__processPushPopForStatic(index, command)
                 self.__staticAddr += 1
                 self.__staticAddrVerification()
             else:
@@ -424,7 +424,24 @@ class CodeWriter:
 
         else:
             raise AssertionError(f"Unknown command:{command}")
-        
+    def __processPushPopForStatic(self, index:int, command:CommandType):
+        if command == CommandType.C_POP:
+            # D = RAM[SP--]
+            self.__pop("D") 
+            # baseAddr=D
+            self.__writeln("@{}.{}".format(self.__currentFileName, index))
+            self.__writeln("M=D")
+            
+        elif command == CommandType.C_PUSH:
+            # D=baseAddr
+            self.__writeln("@{}.{}".format(self.__currentFileName, index))
+            self.__writeln("D=M")
+            # RAM[SP++] = D
+            self.__push("D")
+
+        else:
+            raise AssertionError(f"Unknown command:{command}")
+         
     def __staticAddrVerification(self):
         if self.__staticAddr > BaseAddr.STACK:
             raise AssertionError(f"Static address:{self.__staticAddr} should be smaller than {BaseAddr.STACK}")
