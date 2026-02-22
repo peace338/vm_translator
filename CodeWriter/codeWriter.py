@@ -132,46 +132,61 @@ class CodeWriter:
     def writeFunction(self, functionName:str, nVars:int):
         self.__writeln("//function {} {}".format(functionName, nVars))
         self.__writeln("({})".format(functionName))
+    
+        # SP-(LCL+nVars)<=0
+        self.__writeln("@SP")
+        self.__writeln("D=M")
+        self.__writeln("@LCL")
+        self.__writeln("D=D-M")
+        self.__writeln("@{}".format(nVars))
+        self.__writeln("D=D-A")
+        self.__writeln("@{}${}".format(functionName,"localLoopStop"))
+        self.__writeln("D;JGE")
         # push 0
         self.__writeln("@SP")
         self.__writeln("A=M")
         self.__writeln("M=0")
         self.__writeln("@SP")
         self.__writeln("M=M+1")
-        # SP-(LCL+nVars)>=0
-        self.__writeln("@SP")
-        self.__writeln("D=A")
-        self.__writeln("@LCL")
-        self.__writeln("D=D-A")
-        self.__writeln("@{}".format(nVars))
-        self.__writeln("D=D-A")
+        # jumpt to localLoop
         self.__writeln("@{}".format(functionName))
-        self.__writeln("D;JGE")
+        self.__writeln("0;JMP")
+
+        # stop label of local loop
+        self.__writeln(self.__getLabel(functionName, "localLoopStop"))
         self.__writeln("")
 
     def writeCall(self, functionName:str, nVars:int):
+        returnLabel = self.__getReturnLabel(functionName)
+
         self.__writeln("//call {} {}".format(functionName, nVars))
         # push returnAddress
-        self.__writeln("@SP")
-        self.__writeln("D=M")
+        self.__writeln("//call {} {} - push returnAddress".format(functionName, nVars))
+        self.__writeln("@{}".format(returnLabel))
+        self.__writeln("D=A")
         self.__push("D")
         # push LCL
+        self.__writeln("//call {} {} - push LCL".format(functionName, nVars))
         self.__writeln("@LCL")
         self.__writeln("D=M")
         self.__push("D")
         # push ARG
+        self.__writeln("//call {} {} - push ARG".format(functionName, nVars))
         self.__writeln("@ARG")
         self.__writeln("D=M")
         self.__push("D")
         # push THIS
+        self.__writeln("//call {} {} - push THIS".format(functionName, nVars))
         self.__writeln("@THIS")
         self.__writeln("D=M")
         self.__push("D")
         # push THAT
+        self.__writeln("//call {} {} - push THAT".format(functionName, nVars))
         self.__writeln("@THAT")
         self.__writeln("D=M")
         self.__push("D")
         # ARG = SP-5-nArgs
+        self.__writeln("//call {} {} - ARG = SP-5-nArgs".format(functionName, nVars))
         self.__writeln("@5")
         self.__writeln("D=A")
         self.__writeln("@{}".format(nVars))
@@ -180,13 +195,19 @@ class CodeWriter:
         self.__writeln("D=M-D")
         self.__writeln("@ARG")
         self.__writeln("M=D")
-        
+        # LCL = SP
+        self.__writeln("@SP")
+        self.__writeln("D=M")
+        self.__writeln("@LCL")
+        self.__writeln("M=D") 
         # goto f
+        self.__writeln("//call {} {} - goto f".format(functionName, nVars))
         self.__writeln("@{}".format(functionName))
         self.__writeln("0;JMP")
 
         #(returnAddress)
-        self.__writeln(self.__getReturnLabel(functionName))
+        self.__writeln("//call {} {} - (returnAddress)".format(functionName, nVars))
+        self.__writeln("({})".format(returnLabel))
 
 
         self.__writeln("")
@@ -315,7 +336,7 @@ class CodeWriter:
             self.__writeln(f"{dest}=M")
 
     def __push(self, source:str):
-        if source not in ["D", "A"]:
+        if source not in ["D"]:
             raise AssertionError(f"Unkown destionation:{source} of pop")
         self.__writeln("@SP")
         self.__writeln("A=M")
@@ -401,10 +422,16 @@ class CodeWriter:
             raise AssertionError(f"Static address:{self.__staticAddr} should be smaller than {BaseAddr.STACK}")
 
     def __getReturnLabel(self, functionName:str) -> str:
-        ret = "({}$ret.{})".format(functionName, self.__callCount)
+        ret = "{}$ret.{}".format(functionName, self.__callCount)
         self.__callCount += 1
 
         return ret
+
+    def __getLabel(self, functionName:str, labelName:str) -> str:
+        ret = "({}${})".format(functionName, labelName)
+
+        return ret
+    
     def __writeBootstrapCode(self):
         self.__writeln("//bootstrap")
         # SP=256
