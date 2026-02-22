@@ -119,13 +119,9 @@ class CodeWriter:
     
     def writeIf(self, label:str):
         self.__writeln("//if-goto {}".format(label))
-        self.__writeln("@SP")
-        self.__writeln("A=M-1")
-        self.__writeln("D=M")
-        self.__writeln("@SP")
-        self.__writeln("M=M-1")
+        self.__pop("D")
         self.__writeln("@{}".format(label))
-        self.__writeln("D;JGT")
+        self.__writeln("D;JNE")
 
         self.__writeln("")
 
