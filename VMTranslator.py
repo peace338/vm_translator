@@ -20,13 +20,15 @@ class VMTranslator:
         
         self.fileIndex = 0
         self.lenFilelist = len(self.filelist)
-        
-        self.parser = self.__updateFile()
         self.codeWriter = CodeWriter(outputPath)
+        self.parser = self.__updateFile()
+        
     
     def __updateFile(self) -> Parser:
         ret = Parser(self.filelist[self.fileIndex])
         self.fileIndex += 1
+
+        self.codeWriter.updateFileName(ret.fileName)
 
         return ret
     def __hasMoreFiles(self) -> bool:

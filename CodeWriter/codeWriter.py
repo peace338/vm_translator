@@ -8,9 +8,12 @@ class CodeWriter:
         self.__callCount = 0
         self.__staticAddr = 16
         self.__staticMap = {}
-
+        self.__currentFileName = None
         # For FibonacciElement, StaticsTest
-        self.__writeBootstrapCode()
+        # self.__writeBootstrapCode()
+
+    def updateFileName(self, filename:str):
+        self.__currentFileName = filename
 
     def __del__(self):
         self.close()

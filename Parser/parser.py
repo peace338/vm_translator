@@ -6,6 +6,7 @@ class Parser:
         self.fileSize = os.path.getsize(inputFile)
         self.currentCmd = None
         self.currentCmdType = None
+        self.fileName = os.path.splitext(os.path.basename(inputFile))[0]
     
     def __del__(self):
         self.fileHandle.close()
