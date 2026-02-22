@@ -7,11 +7,13 @@ from common.commandType import CommandType
 class VMTranslator:
     def __init__(self, input:str):
         self.filelist = None
+        bootstrapFlag = False
         if os.path.isdir(input):
             self.filelist = [os.path.join(input, f) \
                                 for f in os.listdir(input) \
                                 if f.endswith(".vm") and os.path.isfile(os.path.join(input, f))]
             outputPath = os.path.join(input, os.path.basename(os.path.normpath(input)) + ".asm")
+            bootstrapFlag=True
         elif os.path.isfile(input):
             self.filelist = [input]
             outputPath = os.path.splitext(input)[0] + ".asm"
@@ -20,7 +22,7 @@ class VMTranslator:
         
         self.fileIndex = 0
         self.lenFilelist = len(self.filelist)
-        self.codeWriter = CodeWriter(outputPath)
+        self.codeWriter = CodeWriter(outputPath, bootstrapFlag)
         self.parser = self.__updateFile()
         
     

@@ -2,7 +2,7 @@ from common.commandType import CommandType
 from common.const import *
 
 class CodeWriter:
-    def __init__(self, outputFile:str):
+    def __init__(self, outputFile:str, bootstrapFlag:bool):
         self.__fileHandle = open(outputFile, "w", encoding="utf-8")
         self.__count = 0
         self.__callCount = 0
@@ -10,7 +10,8 @@ class CodeWriter:
         self.__staticMap = {}
         self.__currentFileName = None
         # For FibonacciElement, StaticsTest
-        self.__writeBootstrapCode()
+        if bootstrapFlag:
+            self.__writeBootstrapCode()
 
     def updateFileName(self, filename:str):
         self.__currentFileName = filename
