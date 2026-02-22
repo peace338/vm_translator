@@ -10,7 +10,7 @@ class CodeWriter:
         self.__staticMap = {}
         self.__currentFileName = None
         # For FibonacciElement, StaticsTest
-        # self.__writeBootstrapCode()
+        self.__writeBootstrapCode()
 
     def updateFileName(self, filename:str):
         self.__currentFileName = filename
