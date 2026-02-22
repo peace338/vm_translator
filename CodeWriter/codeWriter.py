@@ -2,17 +2,25 @@ from common.commandType import CommandType
 from common.const import *
 
 class CodeWriter:
-    def __init__(self, outputFile:str):
+    def __init__(self, outputFile:str, bootstrapFlag:bool):
         self.__fileHandle = open(outputFile, "w", encoding="utf-8")
         self.__count = 0
+        self.__callCount = 0
         self.__staticAddr = 16
         self.__staticMap = {}
+        self.__currentFileName = None
+        # For FibonacciElement, StaticsTest
+        if bootstrapFlag:
+            self.__writeBootstrapCode()
 
+    def updateFileName(self, filename:str):
+        self.__currentFileName = filename
+        self.__staticAddr = 16
     def __del__(self):
         self.close()
 
     def writeArithmetic(self, command:str):
-        self.__writeln("//"+command)
+        self.__writeln("//{}".format(command))
         if command == "add":
             self.__processing("+")
             self.__writeln("")
@@ -85,10 +93,10 @@ class CodeWriter:
             self.__processPushPopForSpecificAddr(baseAddr, command)
         elif segment == "static":
             if command == CommandType.C_PUSH:                
-                self.__processPushPopForSpecificAddr(self.__staticMap[index], command)
+                self.__processPushPopForStatic(index, command)
             elif command == CommandType.C_POP:
                 self.__staticMap[index] = self.__staticAddr
-                self.__processPushPopForSpecificAddr(self.__staticMap[index], command)
+                self.__processPushPopForStatic(index, command)
                 self.__staticAddr += 1
                 self.__staticAddrVerification()
             else:
@@ -98,6 +106,184 @@ class CodeWriter:
         
 
         
+        self.__writeln("")
+
+    def setFileName(self, filename:str):
+        pass
+
+    def writeLabel(self, label:str):
+        self.__writeln("//label {}".format(label))
+        self.__writeln("({})".format(label))
+        self.__writeln("")
+
+    def writeGoto(self, label:str):
+        self.__writeln("//goto {}".format(label))
+        self.__writeln("@{}".format(label))
+        self.__writeln("0;JMP")
+    
+    def writeIf(self, label:str):
+        self.__writeln("//if-goto {}".format(label))
+        self.__pop("D")
+        self.__writeln("@{}".format(label))
+        self.__writeln("D;JNE")
+
+        self.__writeln("")
+
+    def writeFunction(self, functionName:str, nVars:int):
+        self.__writeln("//function {} {}".format(functionName, nVars))
+        self.__writeln("({})".format(functionName))
+    
+        # SP-(LCL+nVars)<=0
+        self.__writeln("@SP")
+        self.__writeln("D=M")
+        self.__writeln("@LCL")
+        self.__writeln("D=D-M")
+        self.__writeln("@{}".format(nVars))
+        self.__writeln("D=D-A")
+        self.__writeln("@{}${}".format(functionName,"localLoopStop"))
+        self.__writeln("D;JGE")
+        # push 0
+        self.__writeln("@SP")
+        self.__writeln("A=M")
+        self.__writeln("M=0")
+        self.__writeln("@SP")
+        self.__writeln("M=M+1")
+        # jumpt to localLoop
+        self.__writeln("@{}".format(functionName))
+        self.__writeln("0;JMP")
+
+        # stop label of local loop
+        self.__writeln(self.__getLabel(functionName, "localLoopStop"))
+        self.__writeln("")
+
+    def writeCall(self, functionName:str, nVars:int):
+        returnLabel = self.__getReturnLabel(functionName)
+
+        self.__writeln("//call {} {}".format(functionName, nVars))
+        # push returnAddress
+        self.__writeln("//call {} {} - push returnAddress".format(functionName, nVars))
+        self.__writeln("@{}".format(returnLabel))
+        self.__writeln("D=A")
+        self.__push("D")
+        # push LCL
+        self.__writeln("//call {} {} - push LCL".format(functionName, nVars))
+        self.__writeln("@LCL")
+        self.__writeln("D=M")
+        self.__push("D")
+        # push ARG
+        self.__writeln("//call {} {} - push ARG".format(functionName, nVars))
+        self.__writeln("@ARG")
+        self.__writeln("D=M")
+        self.__push("D")
+        # push THIS
+        self.__writeln("//call {} {} - push THIS".format(functionName, nVars))
+        self.__writeln("@THIS")
+        self.__writeln("D=M")
+        self.__push("D")
+        # push THAT
+        self.__writeln("//call {} {} - push THAT".format(functionName, nVars))
+        self.__writeln("@THAT")
+        self.__writeln("D=M")
+        self.__push("D")
+        # ARG = SP-5-nArgs
+        self.__writeln("//call {} {} - ARG = SP-5-nArgs".format(functionName, nVars))
+        self.__writeln("@5")
+        self.__writeln("D=A")
+        self.__writeln("@{}".format(nVars))
+        self.__writeln("D=D+A")
+        self.__writeln("@SP")
+        self.__writeln("D=M-D")
+        self.__writeln("@ARG")
+        self.__writeln("M=D")
+        # LCL = SP
+        self.__writeln("@SP")
+        self.__writeln("D=M")
+        self.__writeln("@LCL")
+        self.__writeln("M=D") 
+        # goto f
+        self.__writeln("//call {} {} - goto f".format(functionName, nVars))
+        self.__writeln("@{}".format(functionName))
+        self.__writeln("0;JMP")
+
+        #(returnAddress)
+        self.__writeln("//call {} {} - (returnAddress)".format(functionName, nVars))
+        self.__writeln("({})".format(returnLabel))
+
+
+        self.__writeln("")
+
+    def writeReturn(self):
+        self.__writeln("//return")
+        # frame = LCL
+        self.__writeln("//return - frame = LCL")
+        self.__writeln("@LCL")
+        self.__writeln("D=M")
+        self.__writeln("@frame")
+        self.__writeln("M=D")
+        # retAddr = *(frame-5)
+        self.__writeln("//return - retAddr = *(frame-5)")
+        self.__writeln("@5")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@retAddr")
+        self.__writeln("M=D")
+        # *ARG = pop()
+        self.__writeln("//return - *AGR = pop()")
+        self.__writeln("@SP")
+        self.__writeln("A=M-1")
+        self.__writeln("D=M")
+        self.__writeln("@ARG")
+        self.__writeln("A=M")
+        self.__writeln("M=D")
+        # SP = ARG+1
+        self.__writeln("//return - SP = ARG+1")
+        self.__writeln("@ARG")
+        self.__writeln("D=M")
+        self.__writeln("@SP")
+        self.__writeln("M=D+1")
+        # THAT = *(frmae-1)
+        self.__writeln("//return - THAT = *(frame-1)")
+        self.__writeln("@1")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@THAT")
+        self.__writeln("M=D")
+        # THIS = *(frmae-2)
+        self.__writeln("//return - THIS = *(frame-2")
+        self.__writeln("@2")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@THIS")
+        self.__writeln("M=D")
+        # ARG = *(frmae-3)
+        self.__writeln("//return - ARG = *(frame-2")
+        self.__writeln("@3")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@ARG")
+        self.__writeln("M=D")
+        # LCL = *(frmae-4)
+        self.__writeln("//return - LCL = *(frame-2")
+        self.__writeln("@4")
+        self.__writeln("D=A")
+        self.__writeln("@frame")
+        self.__writeln("A=M-D")
+        self.__writeln("D=M")
+        self.__writeln("@LCL")
+        self.__writeln("M=D")
+        # goto retAddr
+        self.__writeln("//return - goto retAddr")
+        self.__writeln("@retAddr")
+        self.__writeln("A=M")
+        self.__writeln("0;JMP")
         self.__writeln("")
 
     def close(self):
@@ -159,7 +345,7 @@ class CodeWriter:
             self.__writeln(f"{dest}=M")
 
     def __push(self, source:str):
-        if source not in ["D", "A", "M"]:
+        if source not in ["D"]:
             raise AssertionError(f"Unkown destionation:{source} of pop")
         self.__writeln("@SP")
         self.__writeln("A=M")
@@ -239,7 +425,45 @@ class CodeWriter:
 
         else:
             raise AssertionError(f"Unknown command:{command}")
-        
+    def __processPushPopForStatic(self, index:int, command:CommandType):
+        if command == CommandType.C_POP:
+            # D = RAM[SP--]
+            self.__pop("D") 
+            # baseAddr=D
+            self.__writeln("@{}.{}".format(self.__currentFileName, index))
+            self.__writeln("M=D")
+            
+        elif command == CommandType.C_PUSH:
+            # D=baseAddr
+            self.__writeln("@{}.{}".format(self.__currentFileName, index))
+            self.__writeln("D=M")
+            # RAM[SP++] = D
+            self.__push("D")
+
+        else:
+            raise AssertionError(f"Unknown command:{command}")
+         
     def __staticAddrVerification(self):
         if self.__staticAddr > BaseAddr.STACK:
             raise AssertionError(f"Static address:{self.__staticAddr} should be smaller than {BaseAddr.STACK}")
+
+    def __getReturnLabel(self, functionName:str) -> str:
+        ret = "{}$ret.{}".format(functionName, self.__callCount)
+        self.__callCount += 1
+
+        return ret
+
+    def __getLabel(self, functionName:str, labelName:str) -> str:
+        ret = "({}${})".format(functionName, labelName)
+
+        return ret
+    
+    def __writeBootstrapCode(self):
+        self.__writeln("//bootstrap")
+        # SP=256
+        self.__writeln("@256")
+        self.__writeln("D=A")
+        self.__writeln("@SP")
+        self.__writeln("M=D")
+        # call Sys.init
+        self.writeCall("Sys.init",0)

@@ -28,6 +28,13 @@ classDiagram
 	    + constructor(output_file/stream)
 	    + writeArithmetic(command(string))
 	    + wrtiePushPop(type(push or pop), segment(string), index(int))
+        + setFileName(filename(string))
+        + writeLabel(label(string))
+        + writeGoto(label(string))
+        + writeIf(label(string))
+        + writeFunction(functionName(string), nVars(int))
+        + writeCall(functionName(string), nVars(int))
+        + writeReturn()
 	    + close()
     }
     class fileName.vm {
@@ -47,3 +54,5 @@ classDiagram
 [^1]: https://www.nand2tetris.org/project07  
 [^2]: https://github.com/peace338/nand2tetris.git  
 [^3]: https://drive.google.com/file/d/1IkIR8Pwq3PY49QgXpUJOkUUVht-TKIET/view
+[^4]: https://www.nand2tetris.org/project08
+
