@@ -135,13 +135,13 @@ class CodeWriter:
     
         # SP-(LCL+nVars)<=0
         self.__writeln("@SP")
-        self.__writeln("D=A")
+        self.__writeln("D=M")
         self.__writeln("@LCL")
-        self.__writeln("D=D-A")
+        self.__writeln("D=D-M")
         self.__writeln("@{}".format(nVars))
         self.__writeln("D=D-A")
         self.__writeln("@{}${}".format(functionName,"localLoopStop"))
-        self.__writeln("D;JLE")
+        self.__writeln("D;JGE")
         # push 0
         self.__writeln("@SP")
         self.__writeln("A=M")
