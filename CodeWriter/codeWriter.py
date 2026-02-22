@@ -193,7 +193,11 @@ class CodeWriter:
         self.__writeln("D=M-D")
         self.__writeln("@ARG")
         self.__writeln("M=D")
-        
+        # LCL = SP
+        self.__writeln("@SP")
+        self.__writeln("D=M")
+        self.__writeln("@LCL")
+        self.__writeln("M=D") 
         # goto f
         self.__writeln("//call {} {} - goto f".format(functionName, nVars))
         self.__writeln("@{}".format(functionName))
