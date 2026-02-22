@@ -52,4 +52,8 @@ test: run
 	CPUEmulator.sh data/8/FunctionCalls/NestedCall/NestedCall.tst
 	CPUEmulator.sh data/8/FunctionCalls/FibonacciElement/FibonacciElement.tst
 	CPUEmulator.sh data/8/FunctionCalls/StaticsTest/StaticsTest.tst
-.PHONY: activate run clean test $(EXECUTABLE)
+
+release:
+	zip -r project8.zip *
+	
+.PHONY: activate run clean test $(EXECUTABLE) release
