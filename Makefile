@@ -25,6 +25,7 @@ run: $(EXECUTABLE)
 # 	$(EXECUTABLE) data/8/FunctionCalls/SimpleFunction/SimpleFunction.vm
 	$(EXECUTABLE) data/8/FunctionCalls/NestedCall
 	$(EXECUTABLE) data/8/FunctionCalls/FibonacciElement
+	$(EXECUTABLE) data/8/FunctionCalls/StaticsTest
 	
 
 $(EXECUTABLE): VMTranslator.py
@@ -50,4 +51,5 @@ test: run
 # 	CPUEmulator.sh data/8/FunctionCalls/SimpleFunction/SimpleFunction.tst
 	CPUEmulator.sh data/8/FunctionCalls/NestedCall/NestedCall.tst
 	CPUEmulator.sh data/8/FunctionCalls/FibonacciElement/FibonacciElement.tst
+	CPUEmulator.sh data/8/FunctionCalls/StaticsTest/StaticsTest.tst
 .PHONY: activate run clean test $(EXECUTABLE)
