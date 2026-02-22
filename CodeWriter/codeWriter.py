@@ -163,7 +163,7 @@ class CodeWriter:
         # push returnAddress
         self.__writeln("//call {} {} - push returnAddress".format(functionName, nVars))
         self.__writeln("@{}".format(returnLabel))
-        self.__writeln("D=M")
+        self.__writeln("D=A")
         self.__push("D")
         # push LCL
         self.__writeln("//call {} {} - push LCL".format(functionName, nVars))
@@ -336,7 +336,7 @@ class CodeWriter:
             self.__writeln(f"{dest}=M")
 
     def __push(self, source:str):
-        if source not in ["D", "A"]:
+        if source not in ["D"]:
             raise AssertionError(f"Unkown destionation:{source} of pop")
         self.__writeln("@SP")
         self.__writeln("A=M")
