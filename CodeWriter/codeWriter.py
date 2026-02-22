@@ -157,10 +157,12 @@ class CodeWriter:
         self.__writeln("")
 
     def writeCall(self, functionName:str, nVars:int):
+        returnLabel = self.__getReturnLabel(functionName)
+
         self.__writeln("//call {} {}".format(functionName, nVars))
         # push returnAddress
         self.__writeln("//call {} {} - push returnAddress".format(functionName, nVars))
-        self.__writeln("@SP")
+        self.__writeln("@{}".format(returnLabel))
         self.__writeln("D=M")
         self.__push("D")
         # push LCL
@@ -205,7 +207,7 @@ class CodeWriter:
 
         #(returnAddress)
         self.__writeln("//call {} {} - (returnAddress)".format(functionName, nVars))
-        self.__writeln(self.__getReturnLabel(functionName))
+        self.__writeln("({})".format(returnLabel))
 
 
         self.__writeln("")
@@ -420,7 +422,7 @@ class CodeWriter:
             raise AssertionError(f"Static address:{self.__staticAddr} should be smaller than {BaseAddr.STACK}")
 
     def __getReturnLabel(self, functionName:str) -> str:
-        ret = "({}$ret.{})".format(functionName, self.__callCount)
+        ret = "{}$ret.{}".format(functionName, self.__callCount)
         self.__callCount += 1
 
         return ret
